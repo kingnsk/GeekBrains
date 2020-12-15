@@ -12,17 +12,17 @@ namespace lesson2
         {
             int minTemperature=0, maxTemperature=0, avgTemperature=0;
             
-            Console.WriteLine("Введите минимальную суточную температуру (-50 С min):");
+            Console.WriteLine("Введите минимальную суточную температуру (-72 С min):");
             do
             {
                 minTemperature = Convert.ToInt32(Console.ReadLine());
-            } while (minTemperature <= -50 && minTemperature >=50);
+            } while (minTemperature <= -72 && minTemperature >=72);
 
-            Console.WriteLine("Введите максимальную суточную температуру (+50 С max):");
+            Console.WriteLine("Введите максимальную суточную температуру (+72 С max):");
             do
             {
                 maxTemperature = Convert.ToInt32(Console.ReadLine());
-            } while (maxTemperature <= -50 && maxTemperature >= 50);
+            } while (maxTemperature <= -72 && maxTemperature >= 72);
 
             avgTemperature = (minTemperature + maxTemperature) / 2;
 
