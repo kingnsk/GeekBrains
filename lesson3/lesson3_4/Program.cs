@@ -17,8 +17,10 @@ namespace lesson3_4
             //      X - элемент корабля
             //      * - мина (в перспективе)
             //      # - клад (в перспективе)
+
+            const byte dimensionsBattleFieldX = 10,dimensionsBattleFieldY=10;
             
-            char[,] battleField = new char[10, 10] { 
+            char[,] battleField = new char[dimensionsBattleFieldX, dimensionsBattleFieldY] { 
                 { 'O', 'X', 'O', 'O', 'O', 'O', 'O', 'X', 'O', 'O' } ,
                 { 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O' } ,
                 { 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O' } ,
@@ -34,7 +36,7 @@ namespace lesson3_4
 
             for (int i = 0; i < battleField.GetLength(0); i++)
             {
-                if (i+1 < 10) Console.Write($"{i+1}   ");
+                if (i+1 < battleField.GetLength(0)) Console.Write($"{i+1}   ");
                     else Console.Write($"{i + 1}  ");
 
                 for (int j = 0; j < battleField.GetLength(1); j++)
