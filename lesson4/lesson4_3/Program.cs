@@ -16,17 +16,17 @@ namespace lesson4_3
             Autumn
         }
 
+        const byte Jan = 1, Feb = 2, Mar = 3, Apr = 4, May = 5, Jun = 6, Jul = 7, Aug = 8, Sep = 9, Oct = 10, Nov = 11, Dec = 12;
+
         static void Main(string[] args)
         {
-            int month = 0;
-            const int Jan = 1, Dec = 12;
-
+            
             Console.WriteLine("Введите номер месяца:");
-            month = Convert.ToInt32(Console.ReadLine());
+            byte month = Convert.ToByte(Console.ReadLine());
             if (month >= Jan && month <= Dec)
             {
-                Console.WriteLine($"Введенный месяц принадлежит к сезону {monthToSeason(month)}");
-                Console.WriteLine($"Это время года {SeasonToRus(monthToSeason(month))}");
+                Console.WriteLine($"Введенный месяц принадлежит к сезону {MonthToSeason(month)}");
+                Console.WriteLine($"Это время года {SeasonToRus(MonthToSeason(month))}");
             }
             else
             {
@@ -37,12 +37,12 @@ namespace lesson4_3
             Console.ReadLine();
         }
 
-        static season monthToSeason(int month)
+        static season MonthToSeason(byte month)
         {
             
-            if (month == 12 || month == 1 || month == 2) return season.Winter;
-            if (month == 3 || month == 4 || month == 5) return season.Spring;
-            if (month == 6 || month == 7 || month == 8) return season.Summer;
+            if (month == Dec || month == Jan || month == Feb) return season.Winter;
+            if (month == Mar || month == Apr || month == May) return season.Spring;
+            if (month == Jun || month == Jul || month == Aug) return season.Summer;
             return season.Autumn;
             
         }
