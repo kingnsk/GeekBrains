@@ -68,7 +68,7 @@ namespace bl2_less4_2
             {
                 if (Right == null)
                 {
-                    Right = new Tree<T>(data, node.Parent);
+                    Right = new Tree<T>(data, this);
                 }
                 else
                 {
