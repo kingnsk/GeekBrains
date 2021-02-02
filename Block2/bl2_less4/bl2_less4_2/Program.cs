@@ -10,7 +10,7 @@ namespace bl2_less4_2
     {
         static void Main(string[] args)
         {
-            int searchData = 88;
+            int searchData = 71;
             var tree = new Tree<int>();
             tree.Add(50);
             tree.Add(33);
@@ -48,8 +48,9 @@ namespace bl2_less4_2
             var tmp = tree.search(tree.Root, searchData);
             if (tmp != null)
             {
-                Console.WriteLine($"Узел:{tmp.Data} Левый потомок: {tmp.Left} Правый потомок: {tmp.Right} Родитель: {tmp.Parent}");
-            } else
+                Console.WriteLine($"Узел:{tmp.Data} Левый потомок: {tmp.Left.Data} Правый потомок: {tmp.Right.Data} Родитель: {tmp.Parent.Data}");
+            }
+            else
             {
                 Console.WriteLine($"Узел:{searchData} Не найден!");
             }
@@ -58,7 +59,6 @@ namespace bl2_less4_2
             Console.WriteLine($"{tree.remove(tree.Root, searchData)}");
             Console.WriteLine("Получилось дерево:");
             tree.PrintToConsoleOriginal();
-            
         }
     }
 }
