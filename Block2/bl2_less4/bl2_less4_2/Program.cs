@@ -23,7 +23,8 @@ namespace bl2_less4_2
             tree.Add(44);
 
             Console.WriteLine("Бинарное дерево поиска (BST):");
-            tree.PrintToConsoleOriginal();
+            BTreePrinter<int>.Print(tree.Root);
+            //tree.PrintToConsoleOriginal();
 
             Console.WriteLine("Prefix обход дерева:");
             foreach (var item in tree.preOrder())
@@ -46,9 +47,11 @@ namespace bl2_less4_2
             Console.WriteLine($"\n\nИщем в дереве узел со значением {searchData}");
 
             var tmp = tree.search(tree.Root, searchData);
+
+            
             if (tmp != null)
             {
-                Console.WriteLine($"Узел:{tmp.Data} Левый потомок: {tmp.Left.Data} Правый потомок: {tmp.Right.Data} Родитель: {tmp.Parent.Data}");
+                Console.WriteLine($"Узел:{tmp.Data} Левый потомок: {((tmp.Left!=null)?tmp.Left.Data:-1)} Правый потомок: {((tmp.Right != null) ? tmp.Right.Data : -1)} Родитель: {tmp.Parent.Data}");
             }
             else
             {
@@ -58,7 +61,8 @@ namespace bl2_less4_2
             Console.WriteLine($"\nУдаляем узел:{searchData}");
             Console.WriteLine($"{tree.remove(tree.Root, searchData)}");
             Console.WriteLine("Получилось дерево:");
-            tree.PrintToConsoleOriginal();
+            BTreePrinter<int>.Print(tree.Root);
+            //tree.PrintToConsoleOriginal();
         }
     }
 }
