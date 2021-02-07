@@ -37,7 +37,7 @@ namespace bl2_less5
                         current = current.Left;
                         if (current == null)
                         {
-                            parent.Left = newNode;
+                            parent.Left = new Node<T>(data, parent);
                             break;
                         }
                     }
@@ -46,7 +46,7 @@ namespace bl2_less5
                         current = current.Right;
                         if (current == null)
                         {
-                            parent.Right = newNode;
+                            parent.Right = new Node<T>(data, parent);
                             break;
                         }
                     }
