@@ -1,82 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace bl2_less4_2
+namespace bl2_less5
 {
-    class Tree<T> : IComparable
+    public class Tree<T> : IComparable
         where T : IComparable
     {
-        public Tree<T> Root { get; set; }
+        public Node<T> Root { get; set; }
+        public T Data { get; set; }
+
         public int Count { get; set; }
         const int SPACE = 1;
         int MaxWidth { get; set; }
         int MaxLengthWord;
         int HeightTree;
 
-        public T Data { get; set; }
-        public Tree<T> Left { get; set; }
-        public Tree<T> Right { get; set; }
-        public Tree<T> Parent { get; set; }
-
-        public Tree()
-        {
-
-        }
-
-        public Tree(T data)
-        {
-            Data = data;
-        }
-
-        public Tree(T data, Tree<T> parent)
-        {
-            Data = data;
-            Parent = parent;
-        }
-
-
         public void Add(T data)
         {
+            var newNode = new Node<T>(data);
+            newNode.Data = data;
             if (Root == null)
             {
-                Root = new Tree<T>(data);
+                Root = newNode;
                 Count = 1;
-                return;
-            }
-            Root.AddNode(data);
-            Count++;
-        }
-
-        public void AddNode(T data)
-        {
-            var node = new Tree<T>(data);
-            if (node.Data.CompareTo(Data) == -1)
-            {
-                if (Left == null)
-                {
-                    Left = new Tree<T>(data, this);
-                }
-                else
-                {
-                    Left.AddNode(data);
-                }
             }
             else
             {
-                if (Right == null)
+                Node<T> current = Root;
+                Node<T> parent;
+
+                while (true)
                 {
-                    Right = new Tree<T>(data, this);
+                    parent = current;
+                    if (data.CompareTo(current.Data) == -1)
+                    {
+                        current = current.Left;
+                        if (current == null)
+                        {
+                            parent.Left = newNode;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        current = current.Right;
+                        if (current == null)
+                        {
+                            parent.Right = newNode;
+                            break;
+                        }
+                    }
                 }
-                else
-                {
-                    Right.AddNode(data);
-                }
+                Count++;
             }
         }
-
 
         public List<T> preOrder()
         {
@@ -105,12 +82,12 @@ namespace bl2_less4_2
             return inOrder(Root);
         }
 
-        public Tree<T> search(Tree<T> tree, T data)
+        public Node<T> search(Node<T> tree, T data)
         {
             return _search(tree, data);
         }
 
-        private List<T> preOrder(Tree<T> node)
+        private List<T> preOrder(Node<T> node)
         {
             var list = new List<T>();
             if (node != null)
@@ -131,8 +108,7 @@ namespace bl2_less4_2
             return list;
         }
 
-
-        private List<T> postOrder(Tree<T> node)
+        private List<T> postOrder(Node<T> node)
         {
             var list = new List<T>();
             if (node != null)
@@ -152,7 +128,7 @@ namespace bl2_less4_2
             return list;
         }
 
-        private List<T> inOrder(Tree<T> node)
+        private List<T> inOrder(Node<T> node)
         {
             var list = new List<T>();
             if (node != null)
@@ -172,7 +148,7 @@ namespace bl2_less4_2
             return list;
         }
 
-        private Tree<T> _search(Tree<T> tree, T data)
+        private Node<T> _search(Node<T> tree, T data)
         {
             if (tree == null)
             {
@@ -189,14 +165,14 @@ namespace bl2_less4_2
 
         }
 
-        public bool remove(Tree<T> _tree, T val)
+        public bool remove(Node<T> _tree, T val)
         {
-            Tree<T> tree = search(_tree, val);
+            Node<T> tree = search(_tree, val);
             if (tree == null)
             {
                 return false;
             }
-            Tree<T> curTree;
+            Node<T> curTree;
 
             //Если удаляем корень
             if (tree == Root)
@@ -322,7 +298,7 @@ namespace bl2_less4_2
             Foo(Root);
             return max;
 
-            void Foo(Tree<T> node)
+            void Foo(Node<T> node)
             {
                 if (node.Data.ToString().Length > max)
                     max = node.Data.ToString().Length;
@@ -339,7 +315,7 @@ namespace bl2_less4_2
             Foo(Root, 1);
             return max;
 
-            void Foo(Tree<T> node, int height)
+            void Foo(Node<T> node, int height)
             {
                 if (height > max)
                     max = height;
@@ -350,7 +326,7 @@ namespace bl2_less4_2
             }
         }
 
-        void PrintRowOriginal(List<Tree<T>> currenLst)
+        void PrintRowOriginal(List<Node<T>> currenLst)
         {
             // Отступ слева и справа между словами в текущей строке / высоте
             int space = (MaxWidth - currenLst.Count * MaxLengthWord) / (currenLst.Count * 2);
@@ -423,7 +399,7 @@ namespace bl2_less4_2
 
             // Создание списка с узлами, которые идут ниже
             // Задаем Capacity в 2 раза больше, чем у текущего списка
-            List<Tree<T>> newLst = new List<Tree<T>>(currenLst.Count * 2);
+            List<Node<T>> newLst = new List<Node<T>>(currenLst.Count * 2);
             foreach (var node in currenLst)
             {
                 newLst.Add(node == null ? null : (node.Left ?? null));
@@ -450,24 +426,25 @@ namespace bl2_less4_2
 
             // Рисуем само дерево (рекурсивный метод, рисующий строку и символы / и \)
             // Передаем 'корень' дерева, дальше будет размножение
-            PrintRowOriginal(new List<Tree<T>>() { Root });
+            PrintRowOriginal(new List<Node<T>>() { Root });
 
             Console.WriteLine();
         }
 
-        public Tree<T> BFS(int elementSearch)
+        public Node<T> BFS(int elementSearch)
         {
-            var q = new Queue<Tree<T>>();
-            int _count=0;
+            var q = new Queue<Node<T>>();
+            int _count = 0;
             q.Enqueue(Root);
 
-            while (q != null)
+            while (q.Count != 0)
             {
-                Tree<T> tmp = q.Dequeue();
-                
+
+                Node<T> tmp = q.Dequeue();
+
                 Console.WriteLine($"Шаг: {_count}. Сравниваем: {elementSearch.ToString()} с элементом узла дерева {tmp.Data}");
                 _count++;
-                
+
                 if (tmp.Data.CompareTo(elementSearch) == 0)
                 {
                     return tmp;
@@ -487,16 +464,16 @@ namespace bl2_less4_2
             return null;
         }
 
-        public Tree<T> DFS (int elementSearch)
+        public Node<T> DFS(int elementSearch)
         {
-            var st = new Stack<Tree<T>>();
+            var st = new Stack<Node<T>>();
             int _count = 0;
 
             st.Push(Root);
 
-            while(st!=null)
+            while (st.Count != 0)
             {
-                Tree<T> tmp = st.Pop();
+                Node<T> tmp = st.Pop();
 
                 Console.WriteLine($"Шаг: {_count}. Сравниваем: {elementSearch.ToString()} с элементом узла дерева {tmp.Data}");
                 _count++;
@@ -516,7 +493,7 @@ namespace bl2_less4_2
                     st.Push(tmp.Left);
                 }
 
-                
+
             }
             return null;
         }

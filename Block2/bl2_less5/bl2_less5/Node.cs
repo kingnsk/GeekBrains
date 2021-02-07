@@ -1,9 +1,8 @@
 ﻿using System;
 
-
-namespace bl2_less4_2
+namespace bl2_less5
 {
-    class Node<T> : IComparable
+    public class Node<T> : IComparable
         where T : IComparable
     {
         public T Data { get; set; }
@@ -11,6 +10,16 @@ namespace bl2_less4_2
         public Node<T> Right { get; set; }
         public Node<T> Parent { get; set; }
 
+        public Node(T data)
+        {
+            Data = data;
+        }
+
+        public Node(T data, Node<T> parent)
+        {
+            Data = data;
+            Parent = parent;
+        }
 
         public int CompareTo(object obj)
         {
@@ -28,5 +37,6 @@ namespace bl2_less4_2
         {
             return Data.ToString();
         }
+
     }
 }
