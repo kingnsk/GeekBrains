@@ -29,6 +29,8 @@ namespace bl2_less7_1
         static int GetCombinations(int k, int n)
         {
             int result = 0;
+            if (k == 0 && n == 0)
+                return 0;
             if (k == 0)
                 return 1;
             if (n == 0)
@@ -64,6 +66,7 @@ namespace bl2_less7_1
                     }
                 }
             }
+            A[0, 0] = 0;
             Print2(N, M, A);
             Console.WriteLine();
 
