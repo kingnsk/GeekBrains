@@ -19,52 +19,69 @@ namespace MetricsManager.Controllers
         }
 
         [HttpPost("create")]
-        public IActionResult Create([FromQuery] string temperature, [FromQuery] DateTime? timeMeasure)
+        public IActionResult Create([FromQuery] int? temperature, [FromQuery] DateTime? timeMeasure)
         {
             if (temperature==null)
                 return BadRequest();
             if (timeMeasure == null)
                 timeMeasure = DateTime.Now;
-            var dataT = new WeatherForecast();
-            dataT.TemperatureC = Convert.ToInt32(temperature);
-            dataT.Date = timeMeasure;
-            holder.Values.Add(dataT);
+            var weather = new WeatherForecast();
+            weather.TemperatureC = Convert.ToInt32(temperature);
+            weather.Date = timeMeasure;
+            holder.Values.Add(weather);
             return Ok();
         }
 
         [HttpGet("read")]
         public IActionResult Read([FromQuery] DateTime? timeStart, [FromQuery] DateTime? timeEnd)
         {
-
-            var tempValues=new List<WeatherForecast>();
+            var selectedValues=new List<WeatherForecast>();
 
             if (timeStart == null && timeEnd == null)
                 return Ok(holder.Values);
 
             if (timeStart == null)
-                return BadRequest();
+            {
+                foreach (var dataWeather in holder.Values)
+                {
+                    if (dataWeather.Date <= timeEnd)
+                    {
+                        selectedValues.Add(dataWeather);
+                    }
+                }
+                return Ok(selectedValues);
+            }
 
             if (timeEnd == null)
-                return BadRequest();
-
-            foreach (var dataT in holder.Values)
             {
-                if (dataT.Date >= timeStart && dataT.Date <=timeEnd)
+                foreach (var dataWeather in holder.Values)
                 {
-                    tempValues.Add(dataT);
+                    if (dataWeather.Date >= timeStart)
+                    {
+                        selectedValues.Add(dataWeather);
+                    }
+                }
+                return Ok(selectedValues);
+            }
+
+            foreach (var dataWeather in holder.Values)
+            {
+                if (dataWeather.Date >= timeStart && dataWeather.Date <=timeEnd)
+                {
+                    selectedValues.Add(dataWeather);
                 }
             }
-            return Ok(tempValues);
+            return Ok(selectedValues);
         }
 
         [HttpPut("update")]
-        public IActionResult Update([FromQuery] string timeToUpdate, [FromQuery] string newTemperature)
+        public IActionResult Update([FromQuery] DateTime timeToUpdate, [FromQuery] int newTemperature)
         {
-            foreach (var dataT in holder.Values)
+            foreach (var dataWeather in holder.Values)
             {
-                if (dataT.Date.ToString().Contains(timeToUpdate))
+                if (dataWeather.Date.ToString().Contains(timeToUpdate.ToString()))
                 {
-                    dataT.TemperatureC = Convert.ToInt32(newTemperature);
+                    dataWeather.TemperatureC = newTemperature;
                     return Ok();
                 }
             }
@@ -72,17 +89,14 @@ namespace MetricsManager.Controllers
         }
 
         [HttpDelete("delete")]
-        public IActionResult Delete([FromQuery] string timeToDelete)
+        public IActionResult Delete([FromQuery] DateTime timeToDelete)
         {
-            int i=0;
-            foreach (var dataT in holder.Values)
+            for (int i = 0; i < holder.Values.Count; i++)
             {
-                if (dataT.Date.ToString().Contains(timeToDelete))
+                if (holder.Values[i].Date.ToString().Contains(timeToDelete.ToString()))
                 {
                     holder.Values.RemoveAt(i);
-                    return Ok();
                 }
-                i++;
             }
             return Ok();
         }
