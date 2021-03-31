@@ -69,7 +69,7 @@ namespace MetricsManagerTest
             //Arrange
             var fromTime = TimeSpan.FromSeconds(0);
             var toTime = TimeSpan.FromSeconds(100);
-            var percentile = MetricsManager.Enums.Percentile.P90;
+            var percentile = MetricsLibrary.Percentile.P90;
             //Act
             var result = controller.GetMetricsByPercentileFromAllCluster(fromTime, toTime, percentile);
             // Assert

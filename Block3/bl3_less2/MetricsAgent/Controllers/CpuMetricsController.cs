@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MetricsAgent.Enums;
+using MetricsLibrary; 
 
 namespace MetricsAgent.Controllers
 {

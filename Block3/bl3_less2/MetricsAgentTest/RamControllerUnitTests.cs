@@ -30,7 +30,7 @@ namespace MetricsAgentTest
             //Arrange
             var fromTime = TimeSpan.FromSeconds(0);
             var toTime = TimeSpan.FromSeconds(100);
-            var percentile = MetricsAgent.Enums.Percentile.P95;
+            var percentile = MetricsLibrary.Percentile.P95;
             //Act
             var result = controller.GetMetricsByPercentileFromAgent(fromTime, toTime, percentile);
             // Assert
