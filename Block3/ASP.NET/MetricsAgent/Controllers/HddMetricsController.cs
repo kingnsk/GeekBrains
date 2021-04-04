@@ -6,6 +6,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using MetricsLibrary;
 using Microsoft.Extensions.Logging;
+using MetricsAgent.Models;
+using MetricsAgent.Requests;
+using MetricsAgent.Responses;
+using MetricsAgent.DAL;
+
 
 namespace MetricsAgent.Controllers
 {
@@ -15,8 +20,11 @@ namespace MetricsAgent.Controllers
     {
         private readonly ILogger<HddMetricsController> _logger;
 
-        public HddMetricsController(ILogger<HddMetricsController> logger)
+        private IHddMetricsRepository repository;
+
+        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository)
         {
+            this.repository = repository;
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в Agent:HddMetricsController");
         }
@@ -41,5 +49,25 @@ namespace MetricsAgent.Controllers
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime} percentile:{percentile})");
             return Ok();
         }
+
+        [HttpGet("all")]
+        public IActionResult GetAll()
+        {
+            var metrics = repository.GetAll();
+
+            var response = new AllHddMetricsResponse()
+            {
+                Metrics = new List<HddMetricDto>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new HddMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+            }
+            _logger.LogInformation(5, $"Параметры: ()");
+
+            return Ok(response);
+        }
+
     }
 }

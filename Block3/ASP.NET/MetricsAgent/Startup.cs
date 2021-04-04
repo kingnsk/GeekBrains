@@ -23,6 +23,8 @@ namespace MetricsAgent
             services.AddControllers();
             ConfigureSqlLiteConnection(services);
             services.AddScoped<ICpuMetricsRepository, CpuMetricsRepository>();
+            services.AddScoped<IHddMetricsRepository, HddMetricsRepository>();
+
         }
 
         private void ConfigureSqlLiteConnection(IServiceCollection services)
@@ -44,15 +46,11 @@ namespace MetricsAgent
                 // отправляем запрос в базу данных
                 command.ExecuteNonQuery();
 
-
                 command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
                 command.ExecuteNonQuery();
 
                 // вставляем в таблицу Fake-data
-                command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(0,100)";
-                command.ExecuteNonQuery();
-
                 command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(10,1)";
                 command.ExecuteNonQuery();
                 command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(50,2)";
@@ -69,10 +67,40 @@ namespace MetricsAgent
                 command.ExecuteNonQuery();
                 command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(90,15)";
                 command.ExecuteNonQuery();
-
-
-
             }
+
+            using (var command = new SQLiteCommand(connection))
+            {
+                // задаем новый текст команды для выполнения
+                // удаляем таблицу с метриками если она существует в базе данных
+                command.CommandText = "DROP TABLE IF EXISTS hddmetrics";
+                // отправляем запрос в базу данных
+                command.ExecuteNonQuery();
+
+                command.CommandText = @"CREATE TABLE hddmetrics(id INTEGER PRIMARY KEY,
+                    value INT, time INT)";
+                command.ExecuteNonQuery();
+
+                // вставляем в таблицу Fake-data
+                command.CommandText = "INSERT INTO hddmetrics(value, time) VALUES(200,1)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO hddmetrics(value, time) VALUES(500,2)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO hddmetrics(value, time) VALUES(750,4)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO hddmetrics(value, time) VALUES(900,5)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO hddmetrics(value, time) VALUES(100,11)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO hddmetrics(value, time) VALUES(500,12)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO hddmetrics(value, time) VALUES(750,14)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO hddmetrics(value, time) VALUES(900,15)";
+                command.ExecuteNonQuery();
+            }
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
