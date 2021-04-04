@@ -24,7 +24,9 @@ namespace MetricsAgent
             ConfigureSqlLiteConnection(services);
             services.AddScoped<ICpuMetricsRepository, CpuMetricsRepository>();
             services.AddScoped<IHddMetricsRepository, HddMetricsRepository>();
-
+            services.AddScoped<IDotNetMetricsRepository, DotNetMetricsRepository>();
+            services.AddScoped<INetworkMetricsRepository, NetworkMetricsRepository>();
+            services.AddScoped<IRamMetricsRepository, RamMetricsRepository>();
         }
 
         private void ConfigureSqlLiteConnection(IServiceCollection services)
@@ -100,6 +102,98 @@ namespace MetricsAgent
                 command.ExecuteNonQuery();
             }
 
+            using (var command = new SQLiteCommand(connection))
+            {
+                // задаем новый текст команды для выполнения
+                // удаляем таблицу с метриками если она существует в базе данных
+                command.CommandText = "DROP TABLE IF EXISTS dotnetmetrics";
+                // отправляем запрос в базу данных
+                command.ExecuteNonQuery();
+
+                command.CommandText = @"CREATE TABLE dotnetmetrics(id INTEGER PRIMARY KEY,
+                    value INT, time INT)";
+                command.ExecuteNonQuery();
+
+                // вставляем в таблицу Fake-data
+                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(0,10)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(10,20)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(20,40)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(19,50)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(11,110)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(5,120)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(7,140)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(9,150)";
+                command.ExecuteNonQuery();
+            }
+
+            using (var command = new SQLiteCommand(connection))
+            {
+                // задаем новый текст команды для выполнения
+                // удаляем таблицу с метриками если она существует в базе данных
+                command.CommandText = "DROP TABLE IF EXISTS networkmetrics";
+                // отправляем запрос в базу данных
+                command.ExecuteNonQuery();
+
+                command.CommandText = @"CREATE TABLE networkmetrics(id INTEGER PRIMARY KEY,
+                    value INT, time INT)";
+                command.ExecuteNonQuery();
+
+                // вставляем в таблицу Fake-data
+                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(200,1)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(300,2)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(350,4)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(440,5)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(510,11)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(630,12)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(710,14)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(900,15)";
+                command.ExecuteNonQuery();
+            }
+
+            using (var command = new SQLiteCommand(connection))
+            {
+                // задаем новый текст команды для выполнения
+                // удаляем таблицу с метриками если она существует в базе данных
+                command.CommandText = "DROP TABLE IF EXISTS rammetrics";
+                // отправляем запрос в базу данных
+                command.ExecuteNonQuery();
+
+                command.CommandText = @"CREATE TABLE rammetrics(id INTEGER PRIMARY KEY,
+                    value INT, time INT)";
+                command.ExecuteNonQuery();
+
+                // вставляем в таблицу Fake-data
+                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(240,1)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(550,2)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(750,4)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(903,5)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(109,11)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(505,12)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(753,14)";
+                command.ExecuteNonQuery();
+                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(902,15)";
+                command.ExecuteNonQuery();
+            }
 
         }
 

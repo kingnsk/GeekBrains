@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MetricsAgent.DAL;
+using MetricsAgent.Responses;
+using MetricsLibrary;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MetricsLibrary;
-using Microsoft.Extensions.Logging;
+
 
 namespace MetricsAgent.Controllers
 {
@@ -14,9 +14,11 @@ namespace MetricsAgent.Controllers
     public class DotNetMetricsController : ControllerBase
     {
         private readonly ILogger<DotNetMetricsController> _logger;
+        private IDotNetMetricsRepository repository;
 
-        public DotNetMetricsController(ILogger<DotNetMetricsController> logger)
+        public DotNetMetricsController(ILogger<DotNetMetricsController> logger, IDotNetMetricsRepository repository)
         {
+            this.repository = repository;
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в Agent:DotNetMetricsController");
         }
@@ -41,5 +43,25 @@ namespace MetricsAgent.Controllers
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime} percentile:{percentile})");
             return Ok();
         }
+
+        [HttpGet("all")]
+        public IActionResult GetAll()
+        {
+            var metrics = repository.GetAll();
+
+            var response = new AllDotNetMetricsResponse()
+            {
+                Metrics = new List<DotNetMetricDto>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new DotNetMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+            }
+            _logger.LogInformation(5, $"Параметры: ()");
+
+            return Ok(response);
+        }
+
     }
 }

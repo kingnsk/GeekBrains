@@ -2,12 +2,12 @@
 
 namespace MetricsAgent.Responses
 {
-    public class AllHddMetricsResponse
+    public class AllNetworkMetricsResponse
     {
-        public List<HddMetricDto> Metrics { get; set; }
+        public List<NetworkMetricDto> Metrics { get; set; }
     }
 
-    public class HddMetricDto
+    public class NetworkMetricDto
     {
         public int Time { get; set; }
         public int Value { get; set; }

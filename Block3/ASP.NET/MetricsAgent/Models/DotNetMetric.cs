@@ -1,6 +1,6 @@
 ﻿namespace MetricsAgent.Models
 {
-    public class CpuMetric
+    public class DotNetMetric
     {
         public int Id { get; set; }
 
