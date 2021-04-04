@@ -1,4 +1,6 @@
 ﻿using MetricsAgent.DAL;
+using MetricsAgent.Models;
+using MetricsAgent.Requests;
 using MetricsAgent.Responses;
 using MetricsLibrary;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +45,17 @@ namespace MetricsAgent.Controllers
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime} percentile:{percentile})");
             return Ok();
         }
+
+        [HttpPost("create")]
+        public IActionResult Create([FromBody] DotNetMetricCreateRequest request)
+        {
+            repository.Create(new DotNetMetric { Time = request.Time, Value = request.Value });
+            _logger.LogInformation(5, $"Параметры: (Time:{request.Time} Value:{request.Value})");
+
+            return Ok();
+        }
+
+
 
         [HttpGet("all")]
         public IActionResult GetAll()

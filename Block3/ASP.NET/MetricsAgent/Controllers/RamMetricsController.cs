@@ -1,4 +1,6 @@
 ﻿using MetricsAgent.DAL;
+using MetricsAgent.Models;
+using MetricsAgent.Requests;
 using MetricsAgent.Responses;
 using MetricsLibrary;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +42,15 @@ namespace MetricsAgent.Controllers
         public IActionResult GetMetricsByPercentileFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, Percentile percentile)
         {
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime} percentile:{percentile})");
+            return Ok();
+        }
+
+        [HttpPost("create")]
+        public IActionResult Create([FromBody] RamMetricCreateRequest request)
+        {
+            repository.Create(new RamMetric { Time = request.Time, Value = request.Value });
+            _logger.LogInformation(5, $"Параметры: (Time:{request.Time} Value:{request.Value})");
+
             return Ok();
         }
 

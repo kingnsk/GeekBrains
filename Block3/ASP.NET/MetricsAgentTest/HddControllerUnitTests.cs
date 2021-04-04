@@ -1,51 +1,41 @@
+using MetricsAgent.Controllers;
+using MetricsAgent.DAL;
+using MetricsAgent.Models;
+using Moq;
 using System;
 using Xunit;
-using MetricsAgent.Controllers;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace MetricsAgentTest
+namespace MetricsAgentTests
 {
-    public class HddControllerUnitTests
+    public class HddMetricsControllerUnitTests
     {
         private HddMetricsController controller;
-        public HddControllerUnitTests()
+        private Mock<IHddMetricsRepository> mock;
+        private readonly Mock<ILogger<HddMetricsController>> mock_logger;
+
+
+        public HddMetricsControllerUnitTests()
         {
-            controller = new HddMetricsController();
-        }
-        [Fact]
-        public void GetMetricsFromAgent_ReturnsOk()
-        {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(10);
-            var toTime = TimeSpan.FromSeconds(200);
-            //Act
-            var result = controller.GetMetricsFromAgent(fromTime, toTime);
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            mock = new Mock<IHddMetricsRepository>();
+            mock_logger = new Mock<ILogger<HddMetricsController>>();
+            controller = new HddMetricsController(mock_logger.Object, mock.Object);
         }
 
         [Fact]
-        public void GetHddLeftFromAgent_ReturnsOk()
+        public void Create_ShouldCall_Create_From_Repository()
         {
-            //Arrange
-            //Act
-            var result = controller.GetHddLeftFromAgent();
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
-        }
+            // устанавливаем параметр заглушки
+            // в заглушке прописываем что в репозиторий прилетит HddMetric объект
+            mock.Setup(repository => repository.Create(It.IsAny<HddMetric>())).Verifiable();
 
-        [Fact]
-        public void GetMetricsByPercentileFromAgent_ReturnsOk()
-        {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
-            var percentile = MetricsLibrary.Percentile.P95;
-            //Act
-            var result = controller.GetMetricsByPercentileFromAgent(fromTime, toTime, percentile);
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
-        }
+            // выполняем действие на контроллере
+            var result = controller.Create(new MetricsAgent.Requests.HddMetricCreateRequest { Time = 1, Value = 50 });
 
+            // проверяем заглушку на то, что пока работал контроллер
+            // действительно вызвался метод Create репозитория с нужным типом объекта в параметре
+            mock.Verify(repository => repository.Create(It.IsAny<HddMetric>()), Times.AtMostOnce());
+        }
     }
 }
+

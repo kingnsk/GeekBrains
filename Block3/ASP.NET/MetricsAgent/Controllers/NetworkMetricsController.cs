@@ -1,4 +1,6 @@
 ﻿using MetricsAgent.DAL;
+using MetricsAgent.Models;
+using MetricsAgent.Requests;
 using MetricsAgent.Responses;
 using MetricsLibrary;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +35,15 @@ namespace MetricsAgent.Controllers
         public IActionResult GetMetricsByPercentileFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, Percentile percentile)
         {
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime} percentiles:{percentile})");
+            return Ok();
+        }
+
+        [HttpPost("create")]
+        public IActionResult Create([FromBody] NetworkMetricCreateRequest request)
+        {
+            repository.Create(new NetworkMetric { Time = request.Time, Value = request.Value });
+            _logger.LogInformation(5, $"Параметры: (Time:{request.Time} Value:{request.Value})");
+
             return Ok();
         }
 

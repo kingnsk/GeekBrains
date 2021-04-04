@@ -1,52 +1,41 @@
+using MetricsAgent.Controllers;
+using MetricsAgent.DAL;
+using MetricsAgent.Models;
+using Moq;
 using System;
 using Xunit;
-using MetricsAgent.Controllers;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace MetricsAgentTest
+namespace MetricsAgentTests
 {
-    public class DotNetControllerUnitTests
+    public class DotNetMetricsControllerUnitTests
     {
         private DotNetMetricsController controller;
-        public DotNetControllerUnitTests()
+        private Mock<IDotNetMetricsRepository> mock;
+        private readonly Mock<ILogger<DotNetMetricsController>> mock_logger;
+
+
+        public DotNetMetricsControllerUnitTests()
         {
-            controller = new DotNetMetricsController();
-        }
-        [Fact]
-        public void GetMetricsFromAgent_ReturnsOk()
-        {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
-            //Act
-            var result = controller.GetMetricsFromAgent(fromTime, toTime);
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            mock = new Mock<IDotNetMetricsRepository>();
+            mock_logger = new Mock<ILogger<DotNetMetricsController>>();
+            controller = new DotNetMetricsController(mock_logger.Object, mock.Object);
         }
 
         [Fact]
-        public void GetErrorCountFromAgent_ReturnsOk()
+        public void Create_ShouldCall_Create_From_Repository()
         {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
-            //Act
-            var result = controller.GetErrorCountFromAgent(fromTime, toTime);
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
-        }
+            // устанавливаем параметр заглушки
+            // в заглушке прописываем что в репозиторий прилетит DotNetMetric объект
+            mock.Setup(repository => repository.Create(It.IsAny<DotNetMetric>())).Verifiable();
 
-        [Fact]
-        public void GetMetricsByPercentileFromAgent_ReturnsOk()
-        {
-            //Arrange
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
-            var percentile = MetricsLibrary.Percentile.P95;
-            //Act
-            var result = controller.GetMetricsByPercentileFromAgent(fromTime, toTime, percentile);
-            // Assert
-            _ = Assert.IsAssignableFrom<IActionResult>(result);
+            // выполняем действие на контроллере
+            var result = controller.Create(new MetricsAgent.Requests.DotNetMetricCreateRequest { Time = 1, Value = 50 });
+
+            // проверяем заглушку на то, что пока работал контроллер
+            // действительно вызвался метод Create репозитория с нужным типом объекта в параметре
+            mock.Verify(repository => repository.Create(It.IsAny<DotNetMetric>()), Times.AtMostOnce());
         }
     }
 }
+
