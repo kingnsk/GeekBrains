@@ -1,6 +1,7 @@
 ﻿using MetricsAgent.Models;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System;
 
 namespace MetricsAgent.DAL
 {
@@ -8,7 +9,7 @@ namespace MetricsAgent.DAL
     // необходим, чтобы проверить работу репозитория на тесте-заглушке
     public interface IHddMetricsRepository : IRepository<HddMetric>
     {
-
+        
     }
 
     public class HddMetricsRepository : IHddMetricsRepository
@@ -87,7 +88,6 @@ namespace MetricsAgent.DAL
                     });
                 }
             }
-
             return returnList;
         }
 
@@ -115,5 +115,37 @@ namespace MetricsAgent.DAL
                 }
             }
         }
+
+        public IList<HddMetric> GetMetricsFromAgent(DateTimeOffset fromTime, DateTimeOffset toTime)
+        {
+            using var cmd = new SQLiteCommand(connection);
+
+            cmd.CommandText = "SELECT * FROM hddmetrics WHERE time>@fromTime AND time<@toTime";
+
+            cmd.Parameters.AddWithValue("@fromTime", fromTime.ToUnixTimeMilliseconds());
+            cmd.Parameters.AddWithValue("@toTime", toTime.ToUnixTimeMilliseconds());
+            cmd.Prepare();
+           
+            //cmd.ExecuteNonQuery();
+
+            var returnList = new List<HddMetric>();
+
+            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            {
+                // пока есть что читать -- читаем
+                while (reader.Read())
+                {
+                    // добавляем объект в список возврата
+                    returnList.Add(new HddMetric
+                    {
+                        Id = reader.GetInt32(0),
+                        Value = reader.GetInt32(1),
+                        Time = reader.GetInt32(2)
+                    });
+                }
+            }
+            return returnList;
+        }
+
     }
 }

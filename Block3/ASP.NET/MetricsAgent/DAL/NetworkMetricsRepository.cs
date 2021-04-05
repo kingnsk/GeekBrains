@@ -1,6 +1,7 @@
 ﻿using MetricsAgent.Models;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System;
 
 namespace MetricsAgent.DAL
 {
@@ -115,5 +116,35 @@ namespace MetricsAgent.DAL
                 }
             }
         }
+
+        public IList<NetworkMetric> GetMetricsFromAgent(DateTimeOffset fromTime, DateTimeOffset toTime)
+        {
+            using var cmd = new SQLiteCommand(connection);
+
+            cmd.CommandText = "SELECT * FROM networkmetrics WHERE Time > @fromTime AND Time < @toTime";
+            cmd.Parameters.AddWithValue("@fromTime", fromTime);
+            cmd.Parameters.AddWithValue("@totTime", toTime);
+            cmd.Prepare();
+            //            cmd.ExecuteNonQuery();
+
+            var returnList = new List<NetworkMetric>();
+
+            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            {
+                // пока есть что читать -- читаем
+                while (reader.Read())
+                {
+                    // добавляем объект в список возврата
+                    returnList.Add(new NetworkMetric
+                    {
+                        Id = reader.GetInt32(0),
+                        Value = reader.GetInt32(1),
+                        Time = reader.GetInt32(2)
+                    });
+                }
+            }
+            return returnList;
+        }
+
     }
 }

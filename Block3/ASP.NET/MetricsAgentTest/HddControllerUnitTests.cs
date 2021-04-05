@@ -31,11 +31,31 @@ namespace MetricsAgentTests
 
             // выполняем действие на контроллере
             var result = controller.Create(new MetricsAgent.Requests.HddMetricCreateRequest { Time = 1, Value = 50 });
+            //var result1 = controller.Create(new MetricsAgent.Responses.AllHddMetricsResponse { });
+            //var res3 = controller.GetAll();
 
             // проверяем заглушку на то, что пока работал контроллер
             // действительно вызвался метод Create репозитория с нужным типом объекта в параметре
             mock.Verify(repository => repository.Create(It.IsAny<HddMetric>()), Times.AtMostOnce());
         }
+
+        //[Fact]
+        //public void Create_ShouldCall_GetAll_From_Repository()
+        //{
+        //    // устанавливаем параметр заглушки
+        //    // в заглушке прописываем что в репозиторий прилетит HddMetric объект
+        //    //mock.Setup(repository => repository.Create(It.IsAny<HddMetric>())).Verifiable();
+        //    mock.Setup(repository => repository.GetAll()).Verifiable();
+
+        //    // выполняем действие на контроллере
+        //    //var result = controller.Create(new MetricsAgent.Requests.HddMetricCreateRequest { Time = 1, Value = 50 });
+        //    var result = controller.GetAll();
+
+        //    // проверяем заглушку на то, что пока работал контроллер
+        //    // действительно вызвался метод Create репозитория с нужным типом объекта в параметре
+        //    mock.Verify(repository => repository.GetAll());
+        //}
+
     }
 }
 
