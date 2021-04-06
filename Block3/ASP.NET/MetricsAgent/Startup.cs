@@ -85,24 +85,25 @@ namespace MetricsAgent
                 command.ExecuteNonQuery();
 
                 DateTimeOffset testDay = new DateTimeOffset();
+                testDay = DateTime.Now;
                 
 
                 // вставляем в таблицу Fake-data
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(200,{testDay.Millisecond+1000})";
+                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(200,{testDay.Millisecond-1000})";
                 command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(500,{testDay.Millisecond+5000})";
+                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(500,{testDay.Millisecond-5000})";
                 command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(750,{testDay.Minute+10})";
+                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(750,{testDay.Minute-10})";
                 command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(900,{testDay.Minute+50})";
+                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(900,{testDay.Minute-50})";
                 command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(100,{testDay.Hour+1})";
+                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(100,{testDay.Hour-1})";
                 command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(500,{testDay.Hour+7})";
+                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(500,{testDay.Hour-7})";
                 command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(750,{testDay.Year+101})";
+                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(750,{testDay.Year-101})";
                 command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(900,{testDay.Year+121})";
+                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(900,{testDay.Year-121})";
                 command.ExecuteNonQuery();
             }
 

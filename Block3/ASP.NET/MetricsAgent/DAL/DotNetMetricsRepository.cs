@@ -125,7 +125,6 @@ namespace MetricsAgent.DAL
             cmd.Parameters.AddWithValue("@fromTime", fromTime);
             cmd.Parameters.AddWithValue("@totTime", toTime);
             cmd.Prepare();
-            //            cmd.ExecuteNonQuery();
 
             var returnList = new List<DotNetMetric>();
 

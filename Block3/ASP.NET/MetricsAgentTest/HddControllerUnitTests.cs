@@ -40,22 +40,26 @@ namespace MetricsAgentTests
         }
 
         //[Fact]
-        //public void Create_ShouldCall_GetAll_From_Repository()
+        //public void Create_ShouldCall_GetMetricsFromAgent_From_Repository()
         //{
         //    // устанавливаем параметр заглушки
         //    // в заглушке прописываем что в репозиторий прилетит HddMetric объект
-        //    //mock.Setup(repository => repository.Create(It.IsAny<HddMetric>())).Verifiable();
-        //    mock.Setup(repository => repository.GetAll()).Verifiable();
+        //    mock.Setup(repository => repository.GetMetricsFromAgent(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>())).Verifiable();
 
         //    // выполняем действие на контроллере
         //    //var result = controller.Create(new MetricsAgent.Requests.HddMetricCreateRequest { Time = 1, Value = 50 });
-        //    var result = controller.GetAll();
+        //    var fromTime = new DateTimeOffset();
+        //    fromTime = DateTime.Now.AddDays(-100000);
+        //    var toTime = new DateTimeOffset();
+        //    toTime = DateTime.Now;
+
+        //    var result = controller.GetMetricsFromAgent(fromTime, toTime);
 
         //    // проверяем заглушку на то, что пока работал контроллер
         //    // действительно вызвался метод Create репозитория с нужным типом объекта в параметре
-        //    mock.Verify(repository => repository.GetAll());
+        //    mock.Verify(repository => repository.GetMetricsFromAgent(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()),Times.AtMostOnce());
         //}
-
+        
     }
 }
 

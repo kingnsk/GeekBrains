@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 
 namespace MetricsAgent.Controllers
@@ -48,8 +49,9 @@ namespace MetricsAgent.Controllers
         [HttpGet("left")]
         public IActionResult GetHddLeftFromAgent()
         {
+            var response = DriveInfo.GetDrives()[0].AvailableFreeSpace/1024/1024;
             _logger.LogInformation(5, $"");
-            return Ok();
+            return Ok(response);
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]

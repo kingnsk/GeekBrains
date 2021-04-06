@@ -29,8 +29,20 @@ namespace MetricsAgent.Controllers
         [HttpGet("from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
+            var metrics = repository.GetMetricsFromAgent(fromTime, toTime);
+
+            var response = new AllCpuMetricsResponse()
+            {
+                Metrics = new List<CpuMetricDto>()
+            };
+
+            foreach (var metric in metrics)
+            {
+                response.Metrics.Add(new CpuMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+            }
+
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime})");
-            return Ok();
+            return Ok(response);
         }
         [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
         public IActionResult GetMetricsByPercentileFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, Percentile percentile)
@@ -60,7 +72,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new CpuMetricDto { Time = metric.Time, Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(new CpuMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
             }
             _logger.LogInformation(5, $"Параметры: ()");
 

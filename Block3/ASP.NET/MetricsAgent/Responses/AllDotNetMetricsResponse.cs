@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace MetricsAgent.Responses
 {
@@ -9,7 +10,7 @@ namespace MetricsAgent.Responses
 
     public class DotNetMetricDto
     {
-        public int Time { get; set; }
+        public DateTimeOffset Time { get; set; }
         public int Value { get; set; }
         public int Id { get; set; }
     }

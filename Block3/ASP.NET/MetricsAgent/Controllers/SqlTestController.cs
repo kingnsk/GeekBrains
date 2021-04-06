@@ -1,6 +1,7 @@
 ﻿using MetricsAgent.Responses;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SQLite;
+using System;
 
 namespace MetricsAgent.Controllers
 {
@@ -84,7 +85,7 @@ namespace MetricsAgent.Controllers
                             {
                                 Id = reader.GetInt32(0), // читаем данные полученные из базы данных
                                 Value = reader.GetInt32(1), // преобразуя к целочисленному типу
-                                Time = reader.GetInt32(2)
+                                Time = Convert.ToDateTime(reader.GetInt32(2))
                             };
                             // увеличиваем значение счетчика
                             counter++;

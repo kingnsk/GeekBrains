@@ -126,8 +126,6 @@ namespace MetricsAgent.DAL
             cmd.Parameters.AddWithValue("@toTime", toTime.ToUnixTimeMilliseconds());
             cmd.Prepare();
            
-            //cmd.ExecuteNonQuery();
-
             var returnList = new List<HddMetric>();
 
             using (SQLiteDataReader reader = cmd.ExecuteReader())
