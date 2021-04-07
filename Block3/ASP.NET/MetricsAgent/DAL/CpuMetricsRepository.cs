@@ -1,6 +1,9 @@
 ﻿using MetricsAgent.Models;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Data;
+using System.Linq;
+using Dapper;
 using System;
 
 namespace MetricsAgent.DAL
@@ -14,139 +17,80 @@ namespace MetricsAgent.DAL
 
     public class CpuMetricsRepository : ICpuMetricsRepository
     {
-        // наше соединение с базой данных
-        private SQLiteConnection connection;
-
-        // инжектируем соединение с базой данных в наш репозиторий через конструктор
-        public CpuMetricsRepository(SQLiteConnection connection)
-        {
-            this.connection = connection;
-        }
-
+        // строка подключения
+        private const string ConnectionString = @"Data Source=metrics.db;Version=3;Pooling=True;Max Pool Size=100;";
+        // инжектируем соединение с базой данных в наш репозиторий через    
+            public CpuMetricsRepository()
+            {
+            // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
+            SqlMapper.AddTypeHandler(new TimeSpanHandler());
+            }
         public void Create(CpuMetric item)
         {
-            // создаем команду
-            using var cmd = new SQLiteCommand(connection);
-            // прописываем в команду SQL запрос на вставку данных
-            cmd.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(@value, @time)";
-
-            // добавляем параметры в запрос из нашего объекта
-            cmd.Parameters.AddWithValue("@value", item.Value);
-
-            // в таблице будем хранить время в секундах, потому преобразуем перед записью в секунды
-            // через свойство
-            cmd.Parameters.AddWithValue("@time", item.Time);
-            // подготовка команды к выполнению
-            cmd.Prepare();
-
-            // выполнение команды
-            cmd.ExecuteNonQuery();
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                // запрос на вставку данных с плейсхолдерами для параметров
+                connection.Execute("INSERT INTO cpumetrics(value, time) VALUES(@value, @time)",
+                // анонимный объект с параметрами запроса
+                new
+                {
+                    // value подставится на место "@value" в строке запроса
+                    // значение запишется из поля Value объекта item
+                    value = item.Value,
+                    // записываем в поле time количество секунд
+                    time = item.Time
+                });
+            }
         }
-
         public void Delete(int id)
         {
-            using var cmd = new SQLiteCommand(connection);
-            // прописываем в команду SQL запрос на удаление данных
-            cmd.CommandText = "DELETE FROM cpumetrics WHERE id=@id";
-
-            cmd.Parameters.AddWithValue("@id", id);
-            cmd.Prepare();
-            cmd.ExecuteNonQuery();
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                connection.Execute("DELETE FROM cpumetrics WHERE id=@id",
+                new
+                {
+                    id = id
+                });
+            }
         }
-
         public void Update(CpuMetric item)
         {
-            using var cmd = new SQLiteCommand(connection);
-            // прописываем в команду SQL запрос на обновление данных
-            cmd.CommandText = "UPDATE cpumetrics SET value = @value, time = @time WHERE id=@id;";
-            cmd.Parameters.AddWithValue("@id", item.Id);
-            cmd.Parameters.AddWithValue("@value", item.Value);
-            cmd.Parameters.AddWithValue("@time", item.Time);
-            cmd.Prepare();
-
-            cmd.ExecuteNonQuery();
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                connection.Execute("UPDATE cpumetrics SET value = @value, time = @time WHERE id = @id",
+                new
+                {
+                    value = item.Value,
+                    time = item.Time,
+                    id = item.Id
+                });
+            }
         }
-
         public IList<CpuMetric> GetAll()
         {
-            using var cmd = new SQLiteCommand(connection);
-
-            // прописываем в команду SQL запрос на получение всех данных из таблицы
-            cmd.CommandText = "SELECT * FROM cpumetrics";
-
-            var returnList = new List<CpuMetric>();
-
-            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            using (var connection = new SQLiteConnection(ConnectionString))
             {
-                // пока есть что читать -- читаем
-                while (reader.Read())
-                {
-                    // добавляем объект в список возврата
-                    returnList.Add(new CpuMetric
-                    {
-                        Id = reader.GetInt32(0),
-                        Value = reader.GetInt32(1),
-                        // налету преобразуем прочитанные секунды в метку времени
-                        Time = reader.GetInt32(2)
-                    });
-                }
+                // читаем при помощи Query и в шаблон подставляем тип данных
+                // объект которого Dapper сам и заполнит его поля
+                // в соответсвии с названиями колонок
+                return connection.Query<CpuMetric>("SELECT Id, Time, Value FROM cpumetrics").ToList();
             }
-
-            return returnList;
         }
-
         public CpuMetric GetById(int id)
         {
-            using var cmd = new SQLiteCommand(connection);
-            cmd.CommandText = "SELECT * FROM cpumetrics WHERE id=@id";
-            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            using (var connection = new SQLiteConnection(ConnectionString))
             {
-                // если удалось что то прочитать
-                if (reader.Read())
-                {
-                    // возвращаем прочитанное
-                    return new CpuMetric
-                    {
-                        Id = reader.GetInt32(0),
-                        Value = reader.GetInt32(1),
-                        Time = reader.GetInt32(2)
-                    };
-                }
-                else
-                {
-                    // не нашлось запись по идентификатору, не делаем ничего
-                    return null;
-                }
+                return connection.QuerySingle<CpuMetric>("SELECT Id, Time, Value FROM cpumetrics WHERE id = @id",
+                new { id = id });
             }
         }
-
         public IList<CpuMetric> GetMetricsFromAgent(DateTimeOffset fromTime, DateTimeOffset toTime)
         {
-            using var cmd = new SQLiteCommand(connection);
-
-            cmd.CommandText = "SELECT * FROM cpumetrics WHERE Time > @fromTime AND Time < @toTime";
-            cmd.Parameters.AddWithValue("@fromTime", fromTime);
-            cmd.Parameters.AddWithValue("@totTime", toTime);
-            cmd.Prepare();
-
-            var returnList = new List<CpuMetric>();
-
-            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            using (var connection = new SQLiteConnection(ConnectionString))
             {
-                // пока есть что читать -- читаем
-                while (reader.Read())
-                {
-                    // добавляем объект в список возврата
-                    returnList.Add(new CpuMetric
-                    {
-                        Id = reader.GetInt32(0),
-                        Value = reader.GetInt32(1),
-                        Time = reader.GetInt32(2)
-                    });
-                }
+                return connection.Query<CpuMetric>("SELECT * FROM cpumetrics WHERE Time > @fromTime AND Time < @toTime",
+                    new { fromTime = fromTime, toTime = toTime }).ToList();
             }
-            return returnList;
         }
-
     }
 }

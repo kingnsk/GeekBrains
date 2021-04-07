@@ -1,6 +1,9 @@
 ﻿using MetricsAgent.Models;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Data;
+using System.Linq;
+using Dapper;
 using System;
 
 namespace MetricsAgent.DAL
@@ -9,141 +12,85 @@ namespace MetricsAgent.DAL
     // необходим, чтобы проверить работу репозитория на тесте-заглушке
     public interface IHddMetricsRepository : IRepository<HddMetric>
     {
-        
+
     }
 
     public class HddMetricsRepository : IHddMetricsRepository
     {
-        // наше соединение с базой данных
-        private SQLiteConnection connection;
-
-        // инжектируем соединение с базой данных в наш репозиторий через конструктор
-        public HddMetricsRepository(SQLiteConnection connection)
+        // строка подключения
+        private const string ConnectionString = @"Data Source=metrics.db;Version=3;Pooling=True;Max Pool Size=100;";
+        // инжектируем соединение с базой данных в наш репозиторий через    
+        public HddMetricsRepository()
         {
-            this.connection = connection;
+            // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
+            SqlMapper.AddTypeHandler(new TimeSpanHandler());
         }
-
         public void Create(HddMetric item)
         {
-            // создаем команду
-            using var cmd = new SQLiteCommand(connection);
-            // прописываем в команду SQL запрос на вставку данных
-            cmd.CommandText = "INSERT INTO hddmetrics(value, time) VALUES(@value, @time)";
-
-            // добавляем параметры в запрос из нашего объекта
-            cmd.Parameters.AddWithValue("@value", item.Value);
-
-            cmd.Parameters.AddWithValue("@time", item.Time);
-            // подготовка команды к выполнению
-            cmd.Prepare();
-
-            // выполнение команды
-            cmd.ExecuteNonQuery();
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                // запрос на вставку данных с плейсхолдерами для параметров
+                connection.Execute("INSERT INTO hddmetrics(value, time) VALUES(@value, @time)",
+                // анонимный объект с параметрами запроса
+                new
+                {
+                    // value подставится на место "@value" в строке запроса
+                    // значение запишется из поля Value объекта item
+                    value = item.Value,
+                    // записываем в поле time количество секунд
+                    time = item.Time
+                });
+            }
         }
-
         public void Delete(int id)
         {
-            using var cmd = new SQLiteCommand(connection);
-            // прописываем в команду SQL запрос на удаление данных
-            cmd.CommandText = "DELETE FROM hddmetrics WHERE id=@id";
-
-            cmd.Parameters.AddWithValue("@id", id);
-            cmd.Prepare();
-            cmd.ExecuteNonQuery();
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                connection.Execute("DELETE FROM hddmetrics WHERE id=@id",
+                new
+                {
+                    id = id
+                });
+            }
         }
-
         public void Update(HddMetric item)
         {
-            using var cmd = new SQLiteCommand(connection);
-            // прописываем в команду SQL запрос на обновление данных
-            cmd.CommandText = "UPDATE hddmetrics SET value = @value, time = @time WHERE id=@id;";
-            cmd.Parameters.AddWithValue("@id", item.Id);
-            cmd.Parameters.AddWithValue("@value", item.Value);
-            cmd.Parameters.AddWithValue("@time", item.Time);
-            cmd.Prepare();
-
-            cmd.ExecuteNonQuery();
+            using (var connection = new SQLiteConnection(ConnectionString))
+            {
+                connection.Execute("UPDATE hddmetrics SET value = @value, time = @time WHERE id = @id",
+                new
+                {
+                    value = item.Value,
+                    time = item.Time,
+                    id = item.Id
+                });
+            }
         }
-
         public IList<HddMetric> GetAll()
         {
-            using var cmd = new SQLiteCommand(connection);
-
-            // прописываем в команду SQL запрос на получение всех данных из таблицы
-            cmd.CommandText = "SELECT * FROM hddmetrics";
-
-            var returnList = new List<HddMetric>();
-
-            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            using (var connection = new SQLiteConnection(ConnectionString))
             {
-                // пока есть что читать -- читаем
-                while (reader.Read())
-                {
-                    // добавляем объект в список возврата
-                    returnList.Add(new HddMetric
-                    {
-                        Id = reader.GetInt32(0),
-                        Value = reader.GetInt32(1),
-                        Time = reader.GetInt32(2)
-                    });
-                }
+                // читаем при помощи Query и в шаблон подставляем тип данных
+                // объект которого Dapper сам и заполнит его поля
+                // в соответсвии с названиями колонок
+                return connection.Query<HddMetric>("SELECT Id, Time, Value FROM hddmetrics").ToList();
             }
-            return returnList;
         }
-
         public HddMetric GetById(int id)
         {
-            using var cmd = new SQLiteCommand(connection);
-            cmd.CommandText = "SELECT * FROM hddmetrics WHERE id=@id";
-            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            using (var connection = new SQLiteConnection(ConnectionString))
             {
-                // если удалось что то прочитать
-                if (reader.Read())
-                {
-                    // возвращаем прочитанное
-                    return new HddMetric
-                    {
-                        Id = reader.GetInt32(0),
-                        Value = reader.GetInt32(1),
-                        Time = reader.GetInt32(2)
-                    };
-                }
-                else
-                {
-                    // не нашлось запись по идентификатору, не делаем ничего
-                    return null;
-                }
+                return connection.QuerySingle<HddMetric>("SELECT Id, Time, Value FROM hddmetrics WHERE id = @id",
+                new { id = id });
             }
         }
-
         public IList<HddMetric> GetMetricsFromAgent(DateTimeOffset fromTime, DateTimeOffset toTime)
         {
-            using var cmd = new SQLiteCommand(connection);
-
-            cmd.CommandText = "SELECT * FROM hddmetrics WHERE time>@fromTime AND time<@toTime";
-
-            cmd.Parameters.AddWithValue("@fromTime", fromTime.ToUnixTimeMilliseconds());
-            cmd.Parameters.AddWithValue("@toTime", toTime.ToUnixTimeMilliseconds());
-            cmd.Prepare();
-           
-            var returnList = new List<HddMetric>();
-
-            using (SQLiteDataReader reader = cmd.ExecuteReader())
+            using (var connection = new SQLiteConnection(ConnectionString))
             {
-                // пока есть что читать -- читаем
-                while (reader.Read())
-                {
-                    // добавляем объект в список возврата
-                    returnList.Add(new HddMetric
-                    {
-                        Id = reader.GetInt32(0),
-                        Value = reader.GetInt32(1),
-                        Time = reader.GetInt32(2)
-                    });
-                }
+                return connection.Query<HddMetric>("SELECT * FROM hddmetrics WHERE Time > @fromTime AND Time < @toTime",
+                    new { fromTime = fromTime, toTime = toTime }).ToList();
             }
-            return returnList;
         }
-
     }
 }
