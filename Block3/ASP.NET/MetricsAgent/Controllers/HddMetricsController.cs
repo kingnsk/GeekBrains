@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+using AutoMapper;
 
 namespace MetricsAgent.Controllers
 {
@@ -17,12 +17,13 @@ namespace MetricsAgent.Controllers
     public class HddMetricsController : ControllerBase
     {
         private readonly ILogger<HddMetricsController> _logger;
+        private readonly IHddMetricsRepository repository;
+        private readonly IMapper mapper;
 
-        private IHddMetricsRepository repository;
-
-        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository)
+        public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository, IMapper mapper)
         {
             this.repository = repository;
+            this.mapper = mapper;
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в Agent:HddMetricsController");
         }
@@ -39,7 +40,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new HddMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<HddMetricDto>(metric));
             }
 
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime})");
@@ -82,7 +83,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new HddMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<HddMetricDto>(metric));
             }
             _logger.LogInformation(5, $"Параметры: ()");
 

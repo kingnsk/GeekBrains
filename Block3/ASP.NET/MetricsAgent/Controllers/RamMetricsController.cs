@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using AutoMapper;
 
 namespace MetricsAgent.Controllers
 {
@@ -15,11 +16,13 @@ namespace MetricsAgent.Controllers
     public class RamMetricsController : ControllerBase
     {
         private readonly ILogger<RamMetricsController> _logger;
-        private IRamMetricsRepository repository;
+        private readonly IRamMetricsRepository repository;
+        private readonly IMapper mapper;
 
-        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository)
+        public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository, IMapper mapper)
         {
             this.repository = repository;
+            this.mapper = mapper;
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в Agent:RamMetricsController");
         }
@@ -43,7 +46,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new RamMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<RamMetricDto>(metric));
             }
 
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime})");
@@ -77,7 +80,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new RamMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<RamMetricDto>(metric));
             }
             _logger.LogInformation(5, $"Параметры: ()");
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using AutoMapper;
 
 
 namespace MetricsAgent.Controllers
@@ -16,12 +17,13 @@ namespace MetricsAgent.Controllers
     public class CpuMetricsController : ControllerBase
     {
         private readonly ILogger<CpuMetricsController> _logger;
+        private readonly ICpuMetricsRepository repository;
+        private readonly IMapper mapper;
 
-        private ICpuMetricsRepository repository;
-
-        public CpuMetricsController(ILogger<CpuMetricsController> logger, ICpuMetricsRepository repository)
+        public CpuMetricsController(ILogger<CpuMetricsController> logger, ICpuMetricsRepository repository, IMapper mapper)
         {
             this.repository = repository;
+            this.mapper = mapper;
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в Agent:CpuMetricsController");
         }
@@ -63,17 +65,18 @@ namespace MetricsAgent.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
-            var metrics = repository.GetAll();
-
+            //задаем конфигурацию для мапера. Первый обобщенный параметр-- тип объекта
+            //источника, второй-- тип объекта в который перетекут данные из источника
+            IList<CpuMetric> metrics = repository.GetAll();
             var response = new AllCpuMetricsResponse()
             {
                 Metrics = new List<CpuMetricDto>()
             };
-
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new CpuMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<CpuMetricDto>(metric));
             }
+
             _logger.LogInformation(5, $"Параметры: ()");
 
             return Ok(response);

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using AutoMapper;
 
 
 namespace MetricsAgent.Controllers
@@ -16,11 +17,13 @@ namespace MetricsAgent.Controllers
     public class NetworkMetricsController : ControllerBase
     {
         private readonly ILogger<NetworkMetricsController> _logger;
-        private INetworkMetricsRepository repository;
+        private readonly INetworkMetricsRepository repository;
+        private readonly IMapper mapper;
 
-        public NetworkMetricsController(ILogger<NetworkMetricsController> logger, INetworkMetricsRepository repository)
+        public NetworkMetricsController(ILogger<NetworkMetricsController> logger, INetworkMetricsRepository repository, IMapper mapper)
         {
             this.repository = repository;
+            this.mapper = mapper;
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в NetworkMetricsController");
         }
@@ -37,7 +40,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new NetworkMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<NetworkMetricDto>(metric));
             }
 
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime})");
@@ -71,7 +74,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new NetworkMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<NetworkMetricDto>(metric));
             }
             _logger.LogInformation(5, $"Параметры: ()");
 

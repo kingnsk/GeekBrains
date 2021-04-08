@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using AutoMapper;
 
 
 namespace MetricsAgent.Controllers
@@ -16,10 +17,12 @@ namespace MetricsAgent.Controllers
     public class DotNetMetricsController : ControllerBase
     {
         private readonly ILogger<DotNetMetricsController> _logger;
-        private IDotNetMetricsRepository repository;
+        private readonly IDotNetMetricsRepository repository;
+        private readonly IMapper mapper;
 
-        public DotNetMetricsController(ILogger<DotNetMetricsController> logger, IDotNetMetricsRepository repository)
+        public DotNetMetricsController(ILogger<DotNetMetricsController> logger, IDotNetMetricsRepository repository, IMapper mapper)
         {
+            this.mapper = mapper;
             this.repository = repository;
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в Agent:DotNetMetricsController");
@@ -37,7 +40,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new DotNetMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<DotNetMetricDto>(metric));
             }
 
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime})");
@@ -67,8 +70,6 @@ namespace MetricsAgent.Controllers
             return Ok();
         }
 
-
-
         [HttpGet("all")]
         public IActionResult GetAll()
         {
@@ -81,7 +82,8 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(new DotNetMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+                //response.Metrics.Add(new DotNetMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
+                response.Metrics.Add(mapper.Map<DotNetMetricDto>(metric));
             }
             _logger.LogInformation(5, $"Параметры: ()");
 
