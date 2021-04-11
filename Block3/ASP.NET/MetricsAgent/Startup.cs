@@ -57,6 +57,12 @@ namespace MetricsAgent
                 jobType: typeof(HddMetricJob),
                 cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
 
+            services.AddSingleton<NetworkMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(NetworkMetricJob),
+                cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
+
+
             services.AddHostedService<QuartzHostedService>();
         }
 
@@ -95,28 +101,6 @@ namespace MetricsAgent
                 command.CommandText = @"CREATE TABLE hddmetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
                 command.ExecuteNonQuery();
-
-                DateTimeOffset testDay = new DateTimeOffset();
-                testDay = DateTime.Now;
-                
-
-                // вставляем в таблицу Fake-data
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(200,{testDay.Millisecond-1000})";
-                command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(500,{testDay.Millisecond-5000})";
-                command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(750,{testDay.Minute-10})";
-                command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(900,{testDay.Minute-50})";
-                command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(100,{testDay.Hour-1})";
-                command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(500,{testDay.Hour-7})";
-                command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(750,{testDay.Year-101})";
-                command.ExecuteNonQuery();
-                command.CommandText = $"INSERT INTO hddmetrics(value, time) VALUES(900,{testDay.Year-121})";
-                command.ExecuteNonQuery();
             }
 
             using (var command = new SQLiteCommand(connection))
@@ -130,24 +114,6 @@ namespace MetricsAgent
                 command.CommandText = @"CREATE TABLE dotnetmetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
                 command.ExecuteNonQuery();
-
-                // вставляем в таблицу Fake-data
-                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(0,10)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(10,20)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(20,40)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(19,50)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(11,110)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(5,120)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(7,140)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO dotnetmetrics(value, time) VALUES(9,150)";
-                command.ExecuteNonQuery();
             }
 
             using (var command = new SQLiteCommand(connection))
@@ -160,24 +126,6 @@ namespace MetricsAgent
 
                 command.CommandText = @"CREATE TABLE networkmetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
-                command.ExecuteNonQuery();
-
-                // вставляем в таблицу Fake-data
-                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(200,1)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(300,2)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(350,4)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(440,5)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(510,11)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(630,12)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(710,14)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO networkmetrics(value, time) VALUES(900,15)";
                 command.ExecuteNonQuery();
             }
 
