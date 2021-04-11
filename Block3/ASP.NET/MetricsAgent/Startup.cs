@@ -28,11 +28,11 @@ namespace MetricsAgent
         {
             services.AddControllers();
             ConfigureSqlLiteConnection(services);
-            services.AddScoped<ICpuMetricsRepository, CpuMetricsRepository>();
-            services.AddScoped<IHddMetricsRepository, HddMetricsRepository>();
-            services.AddScoped<IDotNetMetricsRepository, DotNetMetricsRepository>();
-            services.AddScoped<INetworkMetricsRepository, NetworkMetricsRepository>();
-            services.AddScoped<IRamMetricsRepository, RamMetricsRepository>();
+            services.AddSingleton<ICpuMetricsRepository, CpuMetricsRepository>();
+            services.AddSingleton<IHddMetricsRepository, HddMetricsRepository>();
+            services.AddSingleton<IDotNetMetricsRepository, DotNetMetricsRepository>();
+            services.AddSingleton<INetworkMetricsRepository, NetworkMetricsRepository>();
+            services.AddSingleton<IRamMetricsRepository, RamMetricsRepository>();
 
             var mapperConfiguration = new MapperConfiguration(mp => mp.AddProfile(new MapperProfile()));
             var mapper = mapperConfiguration.CreateMapper();

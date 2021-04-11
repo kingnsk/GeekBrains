@@ -24,11 +24,11 @@ namespace MetricsAgent
         public MapperProfile()
         {
             // добавлять сопоставления в таком стиле нужно для всех объектов
-            CreateMap<CpuMetric, CpuMetricDto>().ForMember(dbModel => dbModel.Time, _ => _.MapFrom((src, dst) => DateTimeOffset.FromUnixTimeMilliseconds(src.Time)));
-            CreateMap<DotNetMetric, DotNetMetricDto>().ForMember(dbModel => dbModel.Time, _ => _.MapFrom((src, dst) => DateTimeOffset.FromUnixTimeMilliseconds(src.Time)));
-            CreateMap<HddMetric, HddMetricDto>().ForMember(dbModel => dbModel.Time, _ => _.MapFrom((src, dst) => DateTimeOffset.FromUnixTimeMilliseconds(src.Time)));
-            CreateMap<NetworkMetric, NetworkMetricDto>().ForMember(dbModel => dbModel.Time, _ => _.MapFrom((src, dst) => DateTimeOffset.FromUnixTimeMilliseconds(src.Time)));
-            CreateMap<RamMetric, RamMetricDto>().ForMember(dbModel => dbModel.Time, _ => _.MapFrom((src, dst) => DateTimeOffset.FromUnixTimeMilliseconds(src.Time)));
+            CreateMap<CpuMetric, CpuMetricDto>().ForMember(dbModel => dbModel.Time, _ => _.MapFrom((src, dst) => DateTimeOffset.FromUnixTimeSeconds(src.Time)));
+            CreateMap<DotNetMetric, DotNetMetricDto>().ForMember(dbModel => dbModel.Time, _ => _.MapFrom((src, dst) => DateTimeOffset.FromUnixTimeSeconds(src.Time)));
+            CreateMap<HddMetric, HddMetricDto>().ForMember(dbModel => dbModel.Time, _ => _.MapFrom((src, dst) => DateTimeOffset.FromUnixTimeSeconds(src.Time)));
+            CreateMap<NetworkMetric, NetworkMetricDto>().ForMember(dbModel => dbModel.Time, _ => _.MapFrom((src, dst) => DateTimeOffset.FromUnixTimeSeconds(src.Time)));
+            CreateMap<RamMetric, RamMetricDto>().ForMember(dbModel => dbModel.Time, _ => _.MapFrom((src, dst) => DateTimeOffset.FromUnixTimeSeconds(src.Time)));
         }
     }
 }
