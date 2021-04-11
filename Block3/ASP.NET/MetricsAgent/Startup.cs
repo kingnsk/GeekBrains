@@ -47,6 +47,12 @@ namespace MetricsAgent
                 jobType: typeof(CpuMetricJob),
                 cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
 
+            services.AddSingleton<RamMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(RamMetricJob),
+                cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
+
+
             services.AddHostedService<QuartzHostedService>();
         }
 
@@ -182,26 +188,7 @@ namespace MetricsAgent
                 command.CommandText = @"CREATE TABLE rammetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
                 command.ExecuteNonQuery();
-
-                // вставляем в таблицу Fake-data
-                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(240,1)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(550,2)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(750,4)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(903,5)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(109,11)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(505,12)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(753,14)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO rammetrics(value, time) VALUES(902,15)";
-                command.ExecuteNonQuery();
             }
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
