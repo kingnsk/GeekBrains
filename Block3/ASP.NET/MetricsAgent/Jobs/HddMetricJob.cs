@@ -6,31 +6,31 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 namespace MetricsAgent.Jobs
 {
-    public class RamMetricJob : IJob
+    public class HddMetricJob : IJob
     {
         // Инжектируем DI провайдер
         private readonly IServiceProvider _provider;
-        private IRamMetricsRepository _repository;
-        // счетчик для метрики RAM
-        private PerformanceCounter _ramCounter;
-        public RamMetricJob(IServiceProvider provider)
+        private IHddMetricsRepository _repository;
+        // счетчик для метрики HDD
+        private PerformanceCounter _hddCounter;
+        public HddMetricJob(IServiceProvider provider)
         {
             _provider = provider;
-            _repository = _provider.GetService<IRamMetricsRepository>();
-            //_ramCounter = new PerformanceCounter("Memory", "Available MBytes");
-            _ramCounter = new PerformanceCounter("Память", "Доступно МБ");
+            _repository = _provider.GetService<IHddMetricsRepository>();
+            _hddCounter = new PerformanceCounter("Логический диск", "Свободно мегабайт", "_Total");
+
         }
         public Task Execute(IJobExecutionContext context)
         {
             // получаем значение занятости CPU
-            var ramFreeInMB = Convert.ToInt32(_ramCounter.NextValue());
+            var hddFreeInMB = Convert.ToInt32(_hddCounter.NextValue());
             // узнаем когда мы сняли значение метрики.
             var time = Convert.ToInt32(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
             // теперь можно записать что-то при помощи репозитория
-            _repository.Create(new Models.RamMetric
+            _repository.Create(new Models.HddMetric
             {
                 Time = time,
-                Value = ramFreeInMB
+                Value = hddFreeInMB
             });
             return Task.CompletedTask;
         }
