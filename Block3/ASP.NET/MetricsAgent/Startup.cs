@@ -62,6 +62,11 @@ namespace MetricsAgent
                 jobType: typeof(NetworkMetricJob),
                 cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
 
+            services.AddSingleton<DotNetMetricJob>();
+            services.AddSingleton(new JobSchedule(
+                jobType: typeof(DotNetMetricJob),
+                cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
+
 
             services.AddHostedService<QuartzHostedService>();
         }
