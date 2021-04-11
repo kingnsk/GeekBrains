@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace MetricsAgent.DAL
+namespace Core.Interfaces
 {
     public interface IRepository<T> where T : class
     {
@@ -18,5 +19,3 @@ namespace MetricsAgent.DAL
         void Delete(int id);
     }
 }
-
-

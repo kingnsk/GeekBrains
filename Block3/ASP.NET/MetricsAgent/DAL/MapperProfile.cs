@@ -6,16 +6,6 @@ using AutoMapper;
 using MetricsAgent.Models;
 using MetricsAgent.Responses;
 
-//using MetricsAgent.DAL;
-//using MetricsAgent.Models;
-//using MetricsAgent.Requests;
-//using MetricsAgent.Responses;
-//using MetricsLibrary;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.Extensions.Logging;
-//using System;
-//using System.Collections.Generic;
-
 
 namespace MetricsAgent
 {

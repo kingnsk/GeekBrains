@@ -8,29 +8,22 @@ using System;
 
 namespace MetricsAgent.DAL
 {
-    // маркировочный интерфейс
-    // необходим, чтобы проверить работу репозитория на тесте-заглушке
-    public interface IHddMetricsRepository : IRepository<HddMetric>
-    {
-
-    }
-
-    public class HddMetricsRepository : IHddMetricsRepository
+    public class DotNetMetricsRepository : IDotNetMetricsRepository
     {
         // строка подключения
         private const string ConnectionString = @"Data Source=metrics.db;Version=3;Pooling=True;Max Pool Size=100;";
         // инжектируем соединение с базой данных в наш репозиторий через    
-        public HddMetricsRepository()
+        public DotNetMetricsRepository()
         {
             // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
         }
-        public void Create(HddMetric item)
+        public void Create(DotNetMetric item)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 // запрос на вставку данных с плейсхолдерами для параметров
-                connection.Execute("INSERT INTO hddmetrics(value, time) VALUES(@value, @time)",
+                connection.Execute("INSERT INTO dotnetmetrics(value, time) VALUES(@value, @time)",
                 // анонимный объект с параметрами запроса
                 new
                 {
@@ -46,18 +39,18 @@ namespace MetricsAgent.DAL
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
-                connection.Execute("DELETE FROM hddmetrics WHERE id=@id",
+                connection.Execute("DELETE FROM dotnetmetrics WHERE id=@id",
                 new
                 {
                     id = id
                 });
             }
         }
-        public void Update(HddMetric item)
+        public void Update(DotNetMetric item)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
-                connection.Execute("UPDATE hddmetrics SET value = @value, time = @time WHERE id = @id",
+                connection.Execute("UPDATE dotnetmetrics SET value = @value, time = @time WHERE id = @id",
                 new
                 {
                     value = item.Value,
@@ -66,29 +59,29 @@ namespace MetricsAgent.DAL
                 });
             }
         }
-        public IList<HddMetric> GetAll()
+        public IList<DotNetMetric> GetAll()
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 // читаем при помощи Query и в шаблон подставляем тип данных
                 // объект которого Dapper сам и заполнит его поля
                 // в соответсвии с названиями колонок
-                return connection.Query<HddMetric>("SELECT Id, Time, Value FROM hddmetrics").ToList();
+                return connection.Query<DotNetMetric>("SELECT Id, Time, Value FROM dotnetmetrics").ToList();
             }
         }
-        public HddMetric GetById(int id)
+        public DotNetMetric GetById(int id)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
-                return connection.QuerySingle<HddMetric>("SELECT Id, Time, Value FROM hddmetrics WHERE id = @id",
+                return connection.QuerySingle<DotNetMetric>("SELECT Id, Time, Value FROM dotnetmetrics WHERE id = @id",
                 new { id = id });
             }
         }
-        public IList<HddMetric> GetMetricsFromAgent(DateTimeOffset fromTime, DateTimeOffset toTime)
+        public IList<DotNetMetric> GetMetricsFromAgent(DateTimeOffset fromTime, DateTimeOffset toTime)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
-                return connection.Query<HddMetric>("SELECT * FROM hddmetrics WHERE Time > @fromTime AND Time < @toTime",
+                return connection.Query<DotNetMetric>("SELECT * FROM dotnetmetrics WHERE Time > @fromTime AND Time < @toTime",
                     new { fromTime = fromTime, toTime = toTime }).ToList();
             }
         }

@@ -72,24 +72,6 @@ namespace MetricsAgent
                 command.CommandText = @"CREATE TABLE cpumetrics(id INTEGER PRIMARY KEY,
                     value INT, time INT)";
                 command.ExecuteNonQuery();
-
-                // вставляем в таблицу Fake-data
-                command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(10,1)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(50,2)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(75,4)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(90,5)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(10,11)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(50,12)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(75,14)";
-                command.ExecuteNonQuery();
-                command.CommandText = "INSERT INTO cpumetrics(value, time) VALUES(90,15)";
-                command.ExecuteNonQuery();
             }
 
             using (var command = new SQLiteCommand(connection))
