@@ -17,21 +17,21 @@ namespace MetricsAgent.Controllers
     public class HddMetricsController : ControllerBase
     {
         private readonly ILogger<HddMetricsController> _logger;
-        private readonly IHddMetricsRepository repository;
-        private readonly IMapper mapper;
+        private readonly IHddMetricsRepository _repository;
+        private readonly IMapper _mapper;
 
         public HddMetricsController(ILogger<HddMetricsController> logger, IHddMetricsRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            this._repository = repository;
+            this._mapper = mapper;
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в Agent:HddMetricsController");
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
+        public IActionResult GetMetricsByTimePeriod([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
-            var metrics = repository.GetMetricsFromAgent(fromTime,toTime);
+            var metrics = _repository.GetMetricsByTimePeriod(fromTime,toTime);
 
             var response = new AllHddMetricsResponse()
             {
@@ -40,7 +40,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(mapper.Map<HddMetricDto>(metric));
+                response.Metrics.Add(_mapper.Map<HddMetricDto>(metric));
             }
 
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime})");
@@ -48,7 +48,7 @@ namespace MetricsAgent.Controllers
         }
 
         [HttpGet("left")]
-        public IActionResult GetHddLeftFromAgent()
+        public IActionResult GetHddLeft()
         {
             var response = DriveInfo.GetDrives()[0].AvailableFreeSpace/1024/1024;
             _logger.LogInformation(5, $"");
@@ -56,7 +56,7 @@ namespace MetricsAgent.Controllers
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsByPercentileFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, Percentile percentile)
+        public IActionResult GetMetricsByPercentileByTimePeriod([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, Percentile percentile)
         {
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime} percentile:{percentile})");
             return Ok();
@@ -65,7 +65,7 @@ namespace MetricsAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] HddMetricCreateRequest request)
         {
-            repository.Create(new HddMetric { Time = request.Time, Value = request.Value });
+            _repository.Create(new HddMetric { Time = request.Time, Value = request.Value });
             _logger.LogInformation(5, $"Параметры: (Time:{request.Time} Value:{request.Value})");
 
             return Ok();
@@ -74,7 +74,7 @@ namespace MetricsAgent.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
-            var metrics = repository.GetAll();
+            var metrics = _repository.GetAll();
 
             var response = new AllHddMetricsResponse()
             {
@@ -83,7 +83,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(mapper.Map<HddMetricDto>(metric));
+                response.Metrics.Add(_mapper.Map<HddMetricDto>(metric));
             }
             _logger.LogInformation(5, $"Параметры: ()");
 

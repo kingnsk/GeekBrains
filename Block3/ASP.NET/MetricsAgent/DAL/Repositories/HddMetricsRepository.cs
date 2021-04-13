@@ -6,6 +6,7 @@ using System.Linq;
 using Dapper;
 using System;
 using Core.Interfaces;
+using System.IO;
 
 namespace MetricsAgent.DAL
 {
@@ -78,12 +79,12 @@ namespace MetricsAgent.DAL
                 new { id = id });
             }
         }
-        public IList<HddMetric> GetMetricsFromAgent(DateTimeOffset fromTime, DateTimeOffset toTime)
+        public IList<HddMetric> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 return connection.Query<HddMetric>("SELECT * FROM hddmetrics WHERE Time > @fromTime AND Time < @toTime",
-                    new { fromTime = fromTime, toTime = toTime }).ToList();
+                    new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds() }).ToList();
             }
         }
     }

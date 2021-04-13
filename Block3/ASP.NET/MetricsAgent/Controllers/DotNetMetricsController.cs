@@ -17,21 +17,21 @@ namespace MetricsAgent.Controllers
     public class DotNetMetricsController : ControllerBase
     {
         private readonly ILogger<DotNetMetricsController> _logger;
-        private readonly IDotNetMetricsRepository repository;
-        private readonly IMapper mapper;
+        private readonly IDotNetMetricsRepository _repository;
+        private readonly IMapper _mapper;
 
         public DotNetMetricsController(ILogger<DotNetMetricsController> logger, IDotNetMetricsRepository repository, IMapper mapper)
         {
-            this.mapper = mapper;
-            this.repository = repository;
+            this._mapper = mapper;
+            this._repository = repository;
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в Agent:DotNetMetricsController");
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
+        public IActionResult GetMetricsByTimePeriod([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
-            var metrics = repository.GetMetricsFromAgent(fromTime, toTime);
+            var metrics = _repository.GetMetricsByTimePeriod(fromTime, toTime);
 
             var response = new AllDotNetMetricsResponse()
             {
@@ -40,22 +40,15 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(mapper.Map<DotNetMetricDto>(metric));
+                response.Metrics.Add(_mapper.Map<DotNetMetricDto>(metric));
             }
 
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime})");
             return Ok(response);
         }
 
-        [HttpGet("errors-count/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetErrorCountFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
-        {
-            _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime})");
-            return Ok();
-        }
-
         [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsByPercentileFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, Percentile percentile)
+        public IActionResult GetMetricsByPercentileByTimePeriod([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, Percentile percentile)
         {
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime} percentile:{percentile})");
             return Ok();
@@ -64,7 +57,7 @@ namespace MetricsAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] DotNetMetricCreateRequest request)
         {
-            repository.Create(new DotNetMetric { Time = request.Time, Value = request.Value });
+            _repository.Create(new DotNetMetric { Time = request.Time, Value = request.Value });
             _logger.LogInformation(5, $"Параметры: (Time:{request.Time} Value:{request.Value})");
 
             return Ok();
@@ -73,7 +66,7 @@ namespace MetricsAgent.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
-            var metrics = repository.GetAll();
+            var metrics = _repository.GetAll();
 
             var response = new AllDotNetMetricsResponse()
             {
@@ -83,7 +76,7 @@ namespace MetricsAgent.Controllers
             foreach (var metric in metrics)
             {
                 //response.Metrics.Add(new DotNetMetricDto { Time = DateTimeOffset.FromUnixTimeMilliseconds(metric.Time), Value = metric.Value, Id = metric.Id });
-                response.Metrics.Add(mapper.Map<DotNetMetricDto>(metric));
+                response.Metrics.Add(_mapper.Map<DotNetMetricDto>(metric));
             }
             _logger.LogInformation(5, $"Параметры: ()");
 

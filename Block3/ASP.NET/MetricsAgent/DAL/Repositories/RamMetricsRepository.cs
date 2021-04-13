@@ -78,12 +78,12 @@ namespace MetricsAgent.DAL
                 new { id = id });
             }
         }
-        public IList<RamMetric> GetMetricsFromAgent(DateTimeOffset fromTime, DateTimeOffset toTime)
+        public IList<RamMetric> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 return connection.Query<RamMetric>("SELECT * FROM rammetrics WHERE Time > @fromTime AND Time < @toTime",
-                    new { fromTime = fromTime, toTime = toTime }).ToList();
+                    new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds() }).ToList();
             }
         }
     }

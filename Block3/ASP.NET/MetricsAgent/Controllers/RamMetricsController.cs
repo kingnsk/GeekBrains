@@ -16,13 +16,13 @@ namespace MetricsAgent.Controllers
     public class RamMetricsController : ControllerBase
     {
         private readonly ILogger<RamMetricsController> _logger;
-        private readonly IRamMetricsRepository repository;
-        private readonly IMapper mapper;
+        private readonly IRamMetricsRepository _repository;
+        private readonly IMapper _mapper;
 
         public RamMetricsController(ILogger<RamMetricsController> logger, IRamMetricsRepository repository, IMapper mapper)
         {
-            this.repository = repository;
-            this.mapper = mapper;
+            this._repository = repository;
+            this._mapper = mapper;
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в Agent:RamMetricsController");
         }
@@ -35,9 +35,9 @@ namespace MetricsAgent.Controllers
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
+        public IActionResult GetMetricsByTimePeriod([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
-            var metrics = repository.GetMetricsFromAgent(fromTime, toTime);
+            var metrics = _repository.GetMetricsByTimePeriod(fromTime, toTime);
 
             var response = new AllRamMetricsResponse()
             {
@@ -46,14 +46,14 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(mapper.Map<RamMetricDto>(metric));
+                response.Metrics.Add(_mapper.Map<RamMetricDto>(metric));
             }
 
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime})");
             return Ok(response);
         }
         [HttpGet("from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
-        public IActionResult GetMetricsByPercentileFromAgent([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, Percentile percentile)
+        public IActionResult GetMetricsByPercentileByTimePeriod([FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime, Percentile percentile)
         {
             _logger.LogInformation(5, $"Параметры: (fromTime:{fromTime} toTime:{toTime} percentile:{percentile})");
             return Ok();
@@ -62,7 +62,7 @@ namespace MetricsAgent.Controllers
         [HttpPost("create")]
         public IActionResult Create([FromBody] RamMetricCreateRequest request)
         {
-            repository.Create(new RamMetric { Time = request.Time, Value = request.Value });
+            _repository.Create(new RamMetric { Time = request.Time, Value = request.Value });
             _logger.LogInformation(5, $"Параметры: (Time:{request.Time} Value:{request.Value})");
 
             return Ok();
@@ -71,7 +71,7 @@ namespace MetricsAgent.Controllers
         [HttpGet("all")]
         public IActionResult GetAll()
         {
-            var metrics = repository.GetAll();
+            var metrics = _repository.GetAll();
 
             var response = new AllRamMetricsResponse()
             {
@@ -80,7 +80,7 @@ namespace MetricsAgent.Controllers
 
             foreach (var metric in metrics)
             {
-                response.Metrics.Add(mapper.Map<RamMetricDto>(metric));
+                response.Metrics.Add(_mapper.Map<RamMetricDto>(metric));
             }
             _logger.LogInformation(5, $"Параметры: ()");
 

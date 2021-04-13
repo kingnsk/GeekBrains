@@ -77,12 +77,12 @@ namespace MetricsAgent.DAL
                 new { id = id });
             }
         }
-        public IList<DotNetMetric> GetMetricsFromAgent(DateTimeOffset fromTime, DateTimeOffset toTime)
+        public IList<DotNetMetric> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
         {
             using (var connection = new SQLiteConnection(ConnectionString))
             {
                 return connection.Query<DotNetMetric>("SELECT * FROM dotnetmetrics WHERE Time > @fromTime AND Time < @toTime",
-                    new { fromTime = fromTime, toTime = toTime }).ToList();
+                    new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds() }).ToList();
             }
         }
     }

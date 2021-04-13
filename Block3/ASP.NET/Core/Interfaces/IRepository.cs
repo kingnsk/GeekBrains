@@ -6,7 +6,7 @@ namespace Core.Interfaces
 {
     public interface IRepository<T> where T : class
     {
-        IList<T> GetMetricsFromAgent(DateTimeOffset fromTime, DateTimeOffset toTime);
+        IList<T> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime);
 
         IList<T> GetAll();
 

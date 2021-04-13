@@ -5,7 +5,6 @@ using System;
 
 namespace MetricsAgent.Controllers
 {
-    //[Route("api/[controller]")]
     [Route("api")]
     [ApiController]
     public class SqlTestController : ControllerBase
