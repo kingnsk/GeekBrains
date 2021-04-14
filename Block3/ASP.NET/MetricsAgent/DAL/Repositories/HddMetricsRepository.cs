@@ -12,8 +12,6 @@ namespace MetricsAgent.DAL
 {
     public class HddMetricsRepository : IHddMetricsRepository
     {
-        // строка подключения
-        private const string ConnectionString = @"Data Source=metrics.db;Version=3;Pooling=True;Max Pool Size=100;";
         // инжектируем соединение с базой данных в наш репозиторий через    
         public HddMetricsRepository()
         {
@@ -22,7 +20,7 @@ namespace MetricsAgent.DAL
         }
         public void Create(HddMetric item)
         {
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
                 // запрос на вставку данных с плейсхолдерами для параметров
                 connection.Execute("INSERT INTO hddmetrics(value, time) VALUES(@value, @time)",
@@ -39,7 +37,7 @@ namespace MetricsAgent.DAL
         }
         public void Delete(int id)
         {
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
                 connection.Execute("DELETE FROM hddmetrics WHERE id=@id",
                 new
@@ -50,7 +48,7 @@ namespace MetricsAgent.DAL
         }
         public void Update(HddMetric item)
         {
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
                 connection.Execute("UPDATE hddmetrics SET value = @value, time = @time WHERE id = @id",
                 new
@@ -63,7 +61,7 @@ namespace MetricsAgent.DAL
         }
         public IList<HddMetric> GetAll()
         {
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
                 // читаем при помощи Query и в шаблон подставляем тип данных
                 // объект которого Dapper сам и заполнит его поля
@@ -73,7 +71,7 @@ namespace MetricsAgent.DAL
         }
         public HddMetric GetById(int id)
         {
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
                 return connection.QuerySingle<HddMetric>("SELECT Id, Time, Value FROM hddmetrics WHERE id = @id",
                 new { id = id });
@@ -81,7 +79,7 @@ namespace MetricsAgent.DAL
         }
         public IList<HddMetric> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
         {
-            using (var connection = new SQLiteConnection(ConnectionString))
+            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
                 return connection.Query<HddMetric>("SELECT * FROM hddmetrics WHERE Time > @fromTime AND Time < @toTime",
                     new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds() }).ToList();

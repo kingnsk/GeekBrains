@@ -9,6 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MetricsManager.DAL;
+using System.Net.Http;
+using Polly;
 
 namespace MetricsManager
 {
@@ -26,6 +29,9 @@ namespace MetricsManager
         {
             services.AddSingleton<AgentInfoStorage>();
             services.AddControllers();
+
+            services.AddHttpClient<IMetricsAgentClient, MetricsAgent.Client>().AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ =>
+            TimeSpan.FromMilliseconds(1000)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
