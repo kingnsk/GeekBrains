@@ -9,17 +9,16 @@ namespace MetricsAgent.Jobs
     [DisallowConcurrentExecution]
     public class CpuMetricJob : IJob
     {
-        // Инжектируем DI провайдер
-        private readonly IServiceProvider _provider;
         private ICpuMetricsRepository _repository;
         // счетчик для метрики CPU
         private PerformanceCounter _cpuCounter;
-        public CpuMetricJob(IServiceProvider provider)
+
+        public CpuMetricJob(ICpuMetricsRepository repository)
         {
-            _provider = provider;
-            _repository = _provider.GetService<ICpuMetricsRepository>();
+            _repository = repository;
             _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
         }
+
         public Task Execute(IJobExecutionContext context)
         {
             // получаем значение занятости CPU

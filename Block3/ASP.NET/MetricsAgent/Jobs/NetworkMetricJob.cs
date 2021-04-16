@@ -10,16 +10,13 @@ namespace MetricsAgent.Jobs
     public class NetworkMetricJob : IJob
     {
         // Инжектируем DI провайдер
-        private readonly IServiceProvider _provider;
         private INetworkMetricsRepository _repository;
         // счетчик для метрики Network
         private PerformanceCounter _networkCounter;
         private PerformanceCounterCategory _performanceCounterCategory;
-        public NetworkMetricJob(IServiceProvider provider)
+        public NetworkMetricJob(INetworkMetricsRepository repository)
         {
-            _provider = provider;
-            _repository = _provider.GetService<INetworkMetricsRepository>();
-            //_networkCounter = new PerformanceCounter("Сетевой адаптер", "всего байт/с", "<все вхождения>");
+            _repository = repository;
 
             _performanceCounterCategory = new PerformanceCounterCategory("Network Interface");
             string[] instances = _performanceCounterCategory.GetInstanceNames();

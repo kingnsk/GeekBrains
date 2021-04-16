@@ -9,15 +9,12 @@ namespace MetricsAgent.Jobs
     [DisallowConcurrentExecution]
     public class HddMetricJob : IJob
     {
-        // Инжектируем DI провайдер
-        private readonly IServiceProvider _provider;
         private IHddMetricsRepository _repository;
         // счетчик для метрики HDD
         private PerformanceCounter _hddCounter;
-        public HddMetricJob(IServiceProvider provider)
+        public HddMetricJob(IHddMetricsRepository repository)
         {
-            _provider = provider;
-            _repository = _provider.GetService<IHddMetricsRepository>();
+            _repository = repository;
             _hddCounter = new PerformanceCounter("Логический диск", "Свободно мегабайт", "_Total");
 
         }

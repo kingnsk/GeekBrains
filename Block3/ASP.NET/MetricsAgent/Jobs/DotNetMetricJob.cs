@@ -9,15 +9,12 @@ namespace MetricsAgent.Jobs
     [DisallowConcurrentExecution]
     public class DotNetMetricJob : IJob
     {
-        // Инжектируем DI провайдер
-        private readonly IServiceProvider _provider;
         private IDotNetMetricsRepository _repository;
         // счетчик для метрики DotNet gc_heap_size
         private PerformanceCounter _dotnetCounter;
-        public DotNetMetricJob(IServiceProvider provider)
+        public DotNetMetricJob(IDotNetMetricsRepository repository)
         {
-            _provider = provider;
-            _repository = _provider.GetService<IDotNetMetricsRepository>();
+            _repository = repository;
             _dotnetCounter = new PerformanceCounter("Память CLR .NET", "Байт во всех кучах", "_Global_");            
         }
         public Task Execute(IJobExecutionContext context)

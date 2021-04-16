@@ -10,14 +10,12 @@ namespace MetricsAgent.Jobs
     public class RamMetricJob : IJob
     {
         // Инжектируем DI провайдер
-        private readonly IServiceProvider _provider;
         private IRamMetricsRepository _repository;
         // счетчик для метрики RAM
         private PerformanceCounter _ramCounter;
-        public RamMetricJob(IServiceProvider provider)
+        public RamMetricJob(IRamMetricsRepository repository)
         {
-            _provider = provider;
-            _repository = _provider.GetService<IRamMetricsRepository>();
+            _repository = repository;
             //_ramCounter = new PerformanceCounter("Memory", "Available MBytes");
             _ramCounter = new PerformanceCounter("Память", "Доступно МБ");
         }
