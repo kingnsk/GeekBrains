@@ -3,7 +3,7 @@ using System;
 
 namespace MetricsManager.Responses
 {
-    public class DonNetMetricsApiResponse
+    public class AllDotNetMetricsApiResponse
     {
         public List<DotNetMetricApiDto> Metrics { get; set; }
     }

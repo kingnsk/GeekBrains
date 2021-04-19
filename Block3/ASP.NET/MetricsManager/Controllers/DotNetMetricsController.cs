@@ -13,14 +13,14 @@ namespace MetricsManager.Controllers
     [ApiController]
     public class DotNetMetricsController : ControllerBase
     {
-        private readonly ILogger<CpuMetricsController> _logger;
+        private readonly ILogger<DotNetMetricsController> _logger;
 
         public DotNetMetricsController()
         {
 
         }
 
-        public DotNetMetricsController(ILogger<CpuMetricsController> logger)
+        public DotNetMetricsController(ILogger<DotNetMetricsController> logger)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в DotNetMetricsController");

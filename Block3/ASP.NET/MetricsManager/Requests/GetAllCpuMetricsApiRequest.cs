@@ -1,10 +1,12 @@
-﻿namespace MetricsManager.Requests
+﻿using System;
+
+namespace MetricsManager.Requests
 {
     public class GetAllCpuMetricsApiRequest
     {
-        public int AgentId { get; set; }
-        public int Time { get; set; }
-        public int Value { get; set; }
+        public DateTimeOffset FromTime { get; set; }
+        public DateTimeOffset ToTime { get; set; }
+        public string ClientBaseAddress { get; set; }
     }
 
 }

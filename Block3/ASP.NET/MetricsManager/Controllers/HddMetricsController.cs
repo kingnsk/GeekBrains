@@ -13,14 +13,14 @@ namespace MetricsManager.Controllers
     [ApiController]
     public class HddMetricsController : ControllerBase
     {
-        private readonly ILogger<CpuMetricsController> _logger;
+        private readonly ILogger<HddMetricsController> _logger;
 
         public HddMetricsController()
         {
 
         }
 
-        public HddMetricsController(ILogger<CpuMetricsController> logger)
+        public HddMetricsController(ILogger<HddMetricsController> logger)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в HddMetricsController");

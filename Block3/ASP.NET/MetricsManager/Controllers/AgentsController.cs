@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using NLog;
+//using MetricsManager;
 
 namespace MetricsManager.Controllers
 {
@@ -14,9 +16,9 @@ namespace MetricsManager.Controllers
     {
         private readonly AgentInfoStorage agentHolder;
 
-        private readonly ILogger<CpuMetricsController> _logger;
+        private readonly ILogger<AgentsController> _logger;
 
-        public AgentsController(ILogger<CpuMetricsController> logger)
+        public AgentsController(ILogger<AgentsController> logger)
         {
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в AgentsController");

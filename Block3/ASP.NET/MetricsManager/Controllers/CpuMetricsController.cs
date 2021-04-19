@@ -6,14 +6,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using MetricsLibrary;
 using Microsoft.Extensions.Logging;
+using MetricsManager.Requests;
+using MetricsManager.Responses;
 
-namespace MetricsManager.Controllers
+
+
+//namespace MetricsManager.Controller
+
+namespace MetricsMAnager.Controller
 {
     [Route("api/metrics/cpu")]
     [ApiController]
     public class CpuMetricsController : ControllerBase
     {
-        public CpuMetricsController()
+        public CpuMetricsController(    )
         {
 
         }
@@ -27,11 +33,24 @@ namespace MetricsManager.Controllers
         }
 
         [HttpGet("agent/{agentId}/from/{fromTime}/to/{toTime}")]
-        public IActionResult GetMetricsFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime)
+        public IActionResult GetMetricsByTimePeriod([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
+            //var metrics = 
+            var response = new AllCpuMetricsApiResponse()
+            {
+                Metrics = new List<CpuMetricApiDto>()
+            };
+
+            //foreach (var metric in metrics)
+            //{
+            //    response.Metrics.Add(_mapper.Map<CpuMetricApiDto>(metric));
+            //}
+
+
             _logger.LogInformation(5,$"Параметры: (AgentId:{agentId} fromTime:{fromTime} toTime:{toTime})");
             return Ok();
         }
+
         [HttpGet("agent/{agentId}/from/{fromTime}/to/{toTime}/percentiles/{percentile}")]
         public IActionResult GetMetricsByPercentileFromAgent([FromRoute] int agentId, [FromRoute] TimeSpan fromTime, [FromRoute] TimeSpan toTime, [FromRoute] Percentile percentile)
         {

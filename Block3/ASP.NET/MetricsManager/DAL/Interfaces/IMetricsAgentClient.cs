@@ -3,14 +3,15 @@ using MetricsManager.Requests;
 
 
 namespace MetricsManager.DAL
+//namespace MetricsManager.Client
 {
     public interface IMetricsAgentClient
     {
-        AllRamMetricsApiResponse GetRamMetrics(GetAllRamMetricsApiRequest request);
-        AllHddMetricsApiResponse GetHddMetrics(GetAllHddMetricsApiRequest request);
-        DonNetMetricsApiResponse GetDonNetMetrics(DonNetHeapMetrisApiRequest request);
-        AllCpuMetricsApiResponse GetCpuMetrics(GetAllCpuMetricsApiRequest request);
-        AllNetworkMetricsApiResponse GetNetworkMetrics(GetAllNetworkMetricsApiRequest request);
+        AllRamMetricsApiResponse GetAllRamMetrics(GetAllRamMetricsApiRequest request);
+        AllHddMetricsApiResponse GetAllHddMetrics(GetAllHddMetricsApiRequest request);
+        AllDotNetMetricsApiResponse GetAllDotNetMetrics(GetAllDotNetMetricsApiRequest request);
+        AllCpuMetricsApiResponse GetAllCpuMetrics(GetAllCpuMetricsApiRequest request);
+        AllNetworkMetricsApiResponse GetAllNetworkMetrics(GetAllNetworkMetricsApiRequest request);
 
     }
 }
