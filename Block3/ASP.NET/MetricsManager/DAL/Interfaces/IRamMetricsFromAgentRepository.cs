@@ -3,7 +3,7 @@ using Core.Interfaces;
 
 namespace MetricsManager.DAL
 {
-    public interface IRamMetricsFromAgentRepository : IRepository<RamMetricFromAgent>
+    public interface IRamMetricsFromAgentRepository : IRepositoryApi<RamMetricFromAgent>
     {
 
     }

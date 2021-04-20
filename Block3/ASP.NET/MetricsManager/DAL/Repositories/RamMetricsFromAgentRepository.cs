@@ -66,15 +66,15 @@ namespace MetricsManager.DAL
                 // читаем при помощи Query и в шаблон подставляем тип данных
                 // объект которого Dapper сам и заполнит его поля
                 // в соответсвии с названиями колонок
-                return connection.Query<RamMetricFromAgent>("SELECT Id, Time, Value FROM Rammetrics").ToList();
+                return connection.Query<RamMetricFromAgent>("SELECT Id, Time, Value FROM rammetrics").ToList();
             }
         }
 
-        public RamMetricFromAgent GetMaxTime()
+        public Int64 GetMaxTime()
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<RamMetricFromAgent>("SELECT MAX(Time) FROM Rammetrics;");
+                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM rammetrics;");
             }
         }
 
@@ -82,7 +82,7 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<RamMetricFromAgent>("SELECT Id, Time, Value FROM Rammetrics WHERE id = @id",
+                return connection.QuerySingle<RamMetricFromAgent>("SELECT Id, Time, Value FROM rammetrics WHERE id = @id",
                 new { id = id });
             }
         }

@@ -70,11 +70,11 @@ namespace MetricsManager.DAL
             }
         }
 
-        public NetworkMetricFromAgent GetMaxTime()
+        public Int64 GetMaxTime()
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<NetworkMetricFromAgent>("SELECT MAX(Time) FROM Networkmetrics;");
+                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM networkmetrics");
             }
         }
 

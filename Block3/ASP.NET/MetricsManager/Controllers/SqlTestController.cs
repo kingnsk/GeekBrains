@@ -67,7 +67,7 @@ namespace MetricsManager.Controllers
                     string readQuery = "SELECT * FROM cpumetrics LIMIT 3";
 
                     // создаем массив, в который запишем объекты с данными из базы данных
-                    var returnArray = new CpuMetricDto[3];
+                    var returnArray = new CpuMetricApiDto[3];
                     // изменяем текст команды на наш запрос чтения
                     command.CommandText = readQuery;
 
@@ -80,7 +80,7 @@ namespace MetricsManager.Controllers
                         while (reader.Read())
                         {
                             // создаем объект и записываем его в массив
-                            returnArray[counter] = new CpuMetricDto
+                            returnArray[counter] = new CpuMetricApiDto
                             {
                                 Id = reader.GetInt32(0), // читаем данные полученные из базы данных
                                 Value = reader.GetInt32(1), // преобразуя к целочисленному типу

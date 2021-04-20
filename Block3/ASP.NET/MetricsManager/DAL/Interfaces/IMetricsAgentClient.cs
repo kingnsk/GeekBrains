@@ -1,9 +1,7 @@
 ﻿using MetricsManager.Responses;
 using MetricsManager.Requests;
 
-
 namespace MetricsManager.DAL
-//namespace MetricsManager.Client
 {
     public interface IMetricsAgentClient
     {
@@ -12,6 +10,5 @@ namespace MetricsManager.DAL
         AllDotNetMetricsApiResponse GetAllDotNetMetrics(GetAllDotNetMetricsApiRequest request);
         AllCpuMetricsApiResponse GetAllCpuMetrics(GetAllCpuMetricsApiRequest request);
         AllNetworkMetricsApiResponse GetAllNetworkMetrics(GetAllNetworkMetricsApiRequest request);
-
     }
 }

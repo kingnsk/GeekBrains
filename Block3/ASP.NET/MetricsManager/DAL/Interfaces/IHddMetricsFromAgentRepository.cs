@@ -3,7 +3,7 @@ using Core.Interfaces;
 
 namespace MetricsManager.DAL
 {
-    public interface IHddMetricsFromAgentRepository : IRepository<HddMetricFromAgent>
+    public interface IHddMetricsFromAgentRepository : IRepositoryApi<HddMetricFromAgent>
     {
 
     }

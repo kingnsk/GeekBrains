@@ -70,11 +70,11 @@ namespace MetricsManager.DAL
             }
         }
 
-        public DotNetMetricFromAgent GetMaxTime()
+        public Int64 GetMaxTime()
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<DotNetMetricFromAgent>("SELECT MAX(Time) FROM DotNetmetrics;");
+                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM dotnetmetrics");
             }
         }
 

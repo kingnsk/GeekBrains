@@ -31,12 +31,6 @@ namespace MetricsManager
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            //            ConfigureSqlLiteConnection(services);
-            //services.AddSingleton<ICpuMetricsRepository, CpuMetricsRepository>();
-            //services.AddSingleton<IHddMetricsRepository, HddMetricsRepository>();
-            //services.AddSingleton<IDotNetMetricsRepository, DotNetMetricsRepository>();
-            //services.AddSingleton<INetworkMetricsRepository, NetworkMetricsRepository>();
-            //services.AddSingleton<IRamMetricsRepository, RamMetricsRepository>();
 
             services.AddSingleton<AgentInfoStorage>();
             services.AddSingleton<IWorkWithAgentRepository, WorkWithAgentRepository>();
@@ -96,27 +90,6 @@ TimeSpan.FromMilliseconds(1000)));
             services.AddSingleton(new JobSchedule(
                 jobType: typeof(GetAllRamMetricFromAgentsJob),
                 cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
-
-
-            //services.AddSingleton<RamMetricJob>();
-            //services.AddSingleton(new JobSchedule(
-            //    jobType: typeof(RamMetricJob),
-            //    cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
-
-            //services.AddSingleton<HddMetricJob>();
-            //services.AddSingleton(new JobSchedule(
-            //    jobType: typeof(HddMetricJob),
-            //    cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
-
-            //services.AddSingleton<NetworkMetricJob>();
-            //services.AddSingleton(new JobSchedule(
-            //    jobType: typeof(NetworkMetricJob),
-            //    cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
-
-            //services.AddSingleton<DotNetMetricJob>();
-            //services.AddSingleton(new JobSchedule(
-            //    jobType: typeof(DotNetMetricJob),
-            //    cronExpression: "0/5 * * * * ?")); // запускать каждые 5 секунд
 
             services.AddHostedService<QuartzHostedService>();
         }

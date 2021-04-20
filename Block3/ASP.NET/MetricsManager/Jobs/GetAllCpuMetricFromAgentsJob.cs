@@ -34,9 +34,9 @@ namespace MetricsManager.Jobs
             {
                 var ag_url = agentList[i].AgentUrl;
                 GetAllCpuMetricsApiRequest request = new GetAllCpuMetricsApiRequest();
+                
                 request.ClientBaseAddress = ag_url;
-
-                request.FromTime = DateTimeOffset.FromUnixTimeSeconds(_repository.GetMaxTime().Time);
+                request.FromTime = DateTimeOffset.FromUnixTimeSeconds(_repository.GetMaxTime());
                 request.ToTime = DateTimeOffset.UtcNow;
 
                 var responseFromAgent = _agentClient.GetAllCpuMetrics(request);

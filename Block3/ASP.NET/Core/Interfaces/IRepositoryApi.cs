@@ -12,6 +12,8 @@ namespace Core.Interfaces
 
         T GetById(int id);
 
+        Int64 GetMaxTime();
+
         void Create(T item);
 
         void Update(T item);

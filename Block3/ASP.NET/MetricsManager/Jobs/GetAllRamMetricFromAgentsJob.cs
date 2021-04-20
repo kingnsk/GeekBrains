@@ -36,7 +36,7 @@ namespace MetricsManager.Jobs
                 GetAllRamMetricsApiRequest request = new GetAllRamMetricsApiRequest();
                 request.ClientBaseAddress = ag_url;
 
-                request.FromTime = DateTimeOffset.FromUnixTimeSeconds(_repository.GetMaxTime().Time);
+                request.FromTime = DateTimeOffset.FromUnixTimeSeconds(_repository.GetMaxTime());
                 request.ToTime = DateTimeOffset.UtcNow;
 
                 var responseFromAgent = _agentClient.GetAllRamMetrics(request);

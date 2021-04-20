@@ -36,7 +36,7 @@ namespace MetricsManager.Jobs
                 GetAllDotNetMetricsApiRequest request = new GetAllDotNetMetricsApiRequest();
                 request.ClientBaseAddress = ag_url;
 
-                request.FromTime = DateTimeOffset.FromUnixTimeSeconds(_repository.GetMaxTime().Time);
+                request.FromTime = DateTimeOffset.FromUnixTimeSeconds(_repository.GetMaxTime());
                 request.ToTime = DateTimeOffset.UtcNow;
 
                 var responseFromAgent = _agentClient.GetAllDotNetMetrics(request);

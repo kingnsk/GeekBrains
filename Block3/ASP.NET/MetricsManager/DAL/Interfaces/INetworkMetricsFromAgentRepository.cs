@@ -3,7 +3,7 @@ using Core.Interfaces;
 
 namespace MetricsManager.DAL
 {
-    public interface INetworkMetricsFromAgentRepository : IRepository<NetworkMetricFromAgent>
+    public interface INetworkMetricsFromAgentRepository : IRepositoryApi<NetworkMetricFromAgent>
     {
 
     }

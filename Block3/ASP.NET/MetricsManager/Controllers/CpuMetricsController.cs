@@ -9,17 +9,13 @@ using Microsoft.Extensions.Logging;
 using MetricsManager.Requests;
 using MetricsManager.Responses;
 
-
-
-//namespace MetricsManager.Controller
-
 namespace MetricsMAnager.Controller
 {
     [Route("api/metrics/cpu")]
     [ApiController]
     public class CpuMetricsController : ControllerBase
     {
-        public CpuMetricsController(    )
+        public CpuMetricsController( )
         {
 
         }
@@ -35,18 +31,6 @@ namespace MetricsMAnager.Controller
         [HttpGet("agent/{agentId}/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsByTimePeriod([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
-            //var metrics = 
-            var response = new AllCpuMetricsApiResponse()
-            {
-                Metrics = new List<CpuMetricApiDto>()
-            };
-
-            //foreach (var metric in metrics)
-            //{
-            //    response.Metrics.Add(_mapper.Map<CpuMetricApiDto>(metric));
-            //}
-
-
             _logger.LogInformation(5,$"Параметры: (AgentId:{agentId} fromTime:{fromTime} toTime:{toTime})");
             return Ok();
         }

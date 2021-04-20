@@ -70,11 +70,11 @@ namespace MetricsManager.DAL
             }
         }
 
-        public CpuMetricFromAgent GetMaxTime()
+        public Int64 GetMaxTime()
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<CpuMetricFromAgent>("SELECT MAX(Time) FROM cpumetrics;");
+                return connection.QuerySingle<Int64>("SELECT max(time) FROM cpumetrics"); ;
             }
         }
 

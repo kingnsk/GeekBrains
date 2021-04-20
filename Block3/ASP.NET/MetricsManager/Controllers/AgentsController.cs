@@ -6,7 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NLog;
-//using MetricsManager;
 
 namespace MetricsManager.Controllers
 {
@@ -23,7 +22,6 @@ namespace MetricsManager.Controllers
             _logger = logger;
             _logger.LogDebug(1, "NLog встроен в AgentsController");
         }
-
 
         public AgentsController(AgentInfoStorage agentHolder)
         {
@@ -52,7 +50,6 @@ namespace MetricsManager.Controllers
         public IActionResult GetAgents()
         {
             _logger.LogInformation(2, $"");
-            //agentHolder.Values.Add(agentInfo);
             return Ok(agentHolder.Values);
         }
     }

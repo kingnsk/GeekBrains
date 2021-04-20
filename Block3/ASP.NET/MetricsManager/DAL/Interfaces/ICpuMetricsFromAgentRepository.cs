@@ -3,7 +3,7 @@ using Core.Interfaces;
 
 namespace MetricsManager.DAL
 {
-    public interface ICpuMetricsFromAgentRepository : IRepository<CpuMetricFromAgent>
+    public interface ICpuMetricsFromAgentRepository : IRepositoryApi<CpuMetricFromAgent>
     {
 
     }

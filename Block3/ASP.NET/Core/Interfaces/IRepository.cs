@@ -12,7 +12,7 @@ namespace Core.Interfaces
 
         T GetById(int id);
 
-        T GetMaxTime();
+ //       Int64 GetMaxTime();
 
         void Create(T item);
 

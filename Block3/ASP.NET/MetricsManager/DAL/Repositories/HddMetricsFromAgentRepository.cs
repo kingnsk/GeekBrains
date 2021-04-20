@@ -70,11 +70,11 @@ namespace MetricsManager.DAL
             }
         }
 
-        public HddMetricFromAgent GetMaxTime()
+        public Int64 GetMaxTime()
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<HddMetricFromAgent>("SELECT MAX(Time) FROM hddmetrics;");
+                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM hddmetrics");
             }
         }
 

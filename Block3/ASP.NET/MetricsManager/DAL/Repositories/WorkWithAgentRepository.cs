@@ -79,7 +79,7 @@ namespace MetricsManager.DAL
             throw new NotImplementedException();
         }
 
-        public Agent GetMaxTime()
+        public long GetMaxTime()
         {
             throw new NotImplementedException();
         }
