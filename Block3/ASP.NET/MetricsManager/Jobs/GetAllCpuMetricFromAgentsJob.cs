@@ -41,6 +41,8 @@ namespace MetricsManager.Jobs
 
                 var responseFromAgent = _agentClient.GetAllCpuMetrics(request);
 
+                if (responseFromAgent == null) break;
+
                 for (int j = 0; j < responseFromAgent.Metrics.Count; j++)
                 {
                     _repository.Create(new CpuMetricFromAgent

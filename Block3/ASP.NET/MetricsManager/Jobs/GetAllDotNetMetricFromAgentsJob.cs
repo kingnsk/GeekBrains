@@ -40,6 +40,7 @@ namespace MetricsManager.Jobs
                 request.ToTime = DateTimeOffset.UtcNow;
 
                 var responseFromAgent = _agentClient.GetAllDotNetMetrics(request);
+                if (responseFromAgent == null) break;
 
                 for (int j = 0; j < responseFromAgent.Metrics.Count; j++)
                 {

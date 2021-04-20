@@ -15,6 +15,10 @@ using FluentMigrator.Runner;
 using System.Net.Http;
 using Polly;
 using NLog.Web;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.IO;
+
 
 namespace MetricsManager
 {
@@ -30,6 +34,9 @@ namespace MetricsManager
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddSwaggerGen();
+
             services.AddControllers();
 
             services.AddSingleton<AgentInfoStorage>();
@@ -40,8 +47,34 @@ namespace MetricsManager
             services.AddSingleton<IDotNetMetricsFromAgentRepository, DotNetMetricsFromAgentRepository>();
             services.AddSingleton<IRamMetricsFromAgentRepository, RamMetricsFromAgentRepository>();
 
-
             services.AddSingleton<IMetricsAgentClient, MetricsAgentClient>();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "API Менеджера для агентов сбора метрик",
+                    Description = "api нашго сервиса тут",
+                    TermsOfService = new Uri("https://example.com/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "XXX",
+                        Email = string.Empty,
+                        Url = new Uri("https://kremlin.ru"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "GPLv10.10",
+                        Url = new Uri("https://example.com/license"),
+                    }
+                });
+                // Указываем файл из которого брать комментарии для Swagger UI
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
+
 
             services.AddHttpClient<IMetricsAgentClient, MetricsAgentClient>().AddTransientHttpErrorPolicy(p => p.WaitAndRetryAsync(3, _ =>
 TimeSpan.FromMilliseconds(1000)));
@@ -97,6 +130,18 @@ TimeSpan.FromMilliseconds(1000)));
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMigrationRunner migrationRunner)
         {
+            // Включение middleware в пайплайн для обработки Swagger запросов.
+            app.UseSwagger();
+            // включение middleware для генерации swagger-ui
+            // указываем Swagger JSON эндпоинт (куда обращаться за сгенерированной спецификацией
+            // по которой будет построен UI).
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API сервиса менеджера агентов сбора метрик");
+                c.RoutePrefix = string.Empty;
+            });
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
