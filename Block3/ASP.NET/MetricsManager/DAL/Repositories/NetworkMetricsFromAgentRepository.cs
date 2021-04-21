@@ -70,11 +70,11 @@ namespace MetricsManager.DAL
             }
         }
 
-        public Int64 GetMaxTime()
+        public Int64 GetMaxTime(int id)
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM networkmetrics");
+                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM Networkmetrics WHERE id = @id", new { id = id});
             }
         }
 
@@ -82,8 +82,7 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<NetworkMetricFromAgent>("SELECT Id, Time, Value FROM Networkmetrics WHERE id = @id",
-                new { id = id });
+                return connection.QuerySingle<NetworkMetricFromAgent>("SELECT Id, Time, Value FROM Networkmetrics WHERE id = @id", new { id = id });
             }
         }
         public IList<NetworkMetricFromAgent> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime)

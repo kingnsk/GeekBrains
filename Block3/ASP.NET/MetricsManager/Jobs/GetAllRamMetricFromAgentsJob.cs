@@ -32,11 +32,11 @@ namespace MetricsManager.Jobs
 
             for (int i = 0; i < agentList.Count; i++)
             {
-                var ag_url = agentList[i].AgentUrl;
+                var agent_url = agentList[i].AgentUrl;
                 GetAllRamMetricsApiRequest request = new GetAllRamMetricsApiRequest();
-                request.ClientBaseAddress = ag_url;
+                request.ClientBaseAddress = agent_url;
 
-                request.FromTime = DateTimeOffset.FromUnixTimeSeconds(_repository.GetMaxTime());
+                request.FromTime = DateTimeOffset.FromUnixTimeSeconds(_repository.GetMaxTime(agentList[i].AgentId));
                 request.ToTime = DateTimeOffset.UtcNow;
 
                 var responseFromAgent = _agentClient.GetAllRamMetrics(request);

@@ -70,11 +70,12 @@ namespace MetricsManager.DAL
             }
         }
 
-        public Int64 GetMaxTime()
+        public Int64 GetMaxTime(int id)
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM rammetrics;");
+                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM rammetrics WHERE id = @id",
+                new { id = id });
             }
         }
 
