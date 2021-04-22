@@ -26,30 +26,29 @@ namespace MetricsManager.Controllers
             _logger.LogDebug(1, "NLog встроен в AgentsController");
         }
 
-        //public AgentsController(AgentInfoStorage agentHolder)
-        //{
-        //    this._agentHolder = agentHolder;
-        //}
         [HttpPost("register")]
         public IActionResult RegisterAgent([FromBody] Agent agentInfo)
         {
             _agentRepository.Create(agentInfo);
-           // _agentHolder.Values.Add(agentInfo);
             _logger.LogInformation(2, $"Параметры: (AgentInfo:{agentInfo}");
             return Ok();
         }
-        [HttpPut("enable/{agentId}")]
-        public IActionResult EnableAgentById([FromRoute] int agentId)
+        [HttpPost("unregister")]
+        public IActionResult UnRegisterAgent([FromBody] int agentId)
         {
-            _logger.LogInformation(2, $"Enabled: (AgentId:{agentId}");
+            _agentRepository.Delete(agentId); 
+            _logger.LogInformation(2, $"Параметры: (AgentId:{agentId}");
             return Ok();
         }
-        [HttpPut("disable/{agentId}")]
-        public IActionResult DisableAgentById([FromRoute] int agentId)
+
+        [HttpPost("update")]
+        public IActionResult UpdateAgent([FromBody] Agent agentInfo)
         {
-            _logger.LogInformation(2, $"Disabled: (AgentId:{agentId}");
+            _agentRepository.Update(agentInfo);
+            _logger.LogInformation(2, $"Параметры: (AgentInfo:{agentInfo}");
             return Ok();
         }
+
         [HttpGet("getAgents")]
         public IActionResult GetAgents()
         {

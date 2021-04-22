@@ -8,6 +8,7 @@ using MetricsLibrary;
 using Microsoft.Extensions.Logging;
 using MetricsManager.Requests;
 using MetricsManager.Responses;
+using MetricsManager.DAL;
 
 namespace MetricsMAnager.Controller
 {
@@ -21,7 +22,10 @@ namespace MetricsMAnager.Controller
         }
 
         private readonly ILogger<CpuMetricsController> _logger;
-        
+        private readonly ICpuMetricsFromAgentRepository _cpuMetricsFromAgent;
+        private IWorkWithAgentRepository _agentRepository;
+
+
         public CpuMetricsController(ILogger<CpuMetricsController> logger)
         {
             _logger = logger;
@@ -31,7 +35,9 @@ namespace MetricsMAnager.Controller
         [HttpGet("agent/{agentId}/from/{fromTime}/to/{toTime}")]
         public IActionResult GetMetricsByTimePeriod([FromRoute] int agentId, [FromRoute] DateTimeOffset fromTime, [FromRoute] DateTimeOffset toTime)
         {
+
             _logger.LogInformation(5,$"Параметры: (AgentId:{agentId} fromTime:{fromTime} toTime:{toTime})");
+            
             return Ok();
         }
 
