@@ -19,6 +19,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MetricsManager", "MetricsManager\MetricsManager.csproj", "{66EAE0A6-1F7D-4D0B-9FE6-2E72197B4481}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricsManagerClient", "MetricsClient\MetricsManagerClient.csproj", "{48BFDC7B-B480-4B3B-9DB1-588CE2C49A1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeryWPF", "TeryWPF\TeryWPF.csproj", "{FE118A71-F7E0-451C-A038-CA1121ADBBE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +53,14 @@ Global
 		{66EAE0A6-1F7D-4D0B-9FE6-2E72197B4481}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66EAE0A6-1F7D-4D0B-9FE6-2E72197B4481}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66EAE0A6-1F7D-4D0B-9FE6-2E72197B4481}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48BFDC7B-B480-4B3B-9DB1-588CE2C49A1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48BFDC7B-B480-4B3B-9DB1-588CE2C49A1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48BFDC7B-B480-4B3B-9DB1-588CE2C49A1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48BFDC7B-B480-4B3B-9DB1-588CE2C49A1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE118A71-F7E0-451C-A038-CA1121ADBBE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE118A71-F7E0-451C-A038-CA1121ADBBE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE118A71-F7E0-451C-A038-CA1121ADBBE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE118A71-F7E0-451C-A038-CA1121ADBBE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
