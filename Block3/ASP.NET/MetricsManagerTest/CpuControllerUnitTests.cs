@@ -4,6 +4,7 @@ using MetricsManager.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MetricsLibrary;
+using MetricsManager.Controller;
 
 namespace MetricsManagerTest
 {
@@ -16,15 +17,16 @@ namespace MetricsManagerTest
             controller = new CpuMetricsController();
         }
         [Fact]
-        public void GetMetricsFromAgent_ReturnsOk()
+        public void GetMetricsByTimePeriod_ReturnsOk()
         {
             //Arrange
             var agentId = 1;
-            var fromTime = TimeSpan.FromSeconds(0);
-            var toTime = TimeSpan.FromSeconds(100);
+            
+            var fromTime = DateTimeOffset.UtcNow.AddSeconds(-1000);
+            var toTime = DateTimeOffset.UtcNow;
             
             //Act
-            var result = controller.GetMetricsFromAgent(agentId, fromTime, toTime);
+            var result = controller.GetMetricsByTimePeriod(agentId, fromTime, toTime);
             // Assert
             _ = Assert.IsAssignableFrom<IActionResult>(result);
         }

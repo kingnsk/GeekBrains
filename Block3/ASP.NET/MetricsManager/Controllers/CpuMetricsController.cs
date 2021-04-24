@@ -10,7 +10,7 @@ using MetricsManager.Requests;
 using MetricsManager.Responses;
 using MetricsManager.DAL;
 
-namespace MetricsMAnager.Controller
+namespace MetricsManager.Controller
 {
     [Route("api/metrics/cpu")]
     [ApiController]
