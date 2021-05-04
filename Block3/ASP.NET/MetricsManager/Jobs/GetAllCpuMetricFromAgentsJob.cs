@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿ using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using System;
 using System.Data.SQLite;

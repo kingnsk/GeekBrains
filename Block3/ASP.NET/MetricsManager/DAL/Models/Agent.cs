@@ -7,6 +7,7 @@
         public int AgentId { get; set; }
 
         public string AgentUrl { get; set; }
+
     }
 
 }

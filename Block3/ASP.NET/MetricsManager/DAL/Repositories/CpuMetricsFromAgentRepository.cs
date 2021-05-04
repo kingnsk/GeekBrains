@@ -11,25 +11,18 @@ namespace MetricsManager.DAL
 {
     public class CpuMetricsFromAgentRepository : ICpuMetricsFromAgentRepository
     {
-        // инжектируем соединение с базой данных в наш репозиторий через    
             public CpuMetricsFromAgentRepository()
             {
-            // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
             }
         public void Create(CpuMetricFromAgent item)
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                // запрос на вставку данных с плейсхолдерами для параметров
                 connection.Execute("INSERT INTO cpumetrics(value, time, agentid) VALUES(@value, @time, @agentid)",
-                // анонимный объект с параметрами запроса
                 new
                 {
-                    // value подставится на место "@value" в строке запроса
-                    // значение запишется из поля Value объекта item
                     value = item.Value,
-                    // записываем в поле time количество секунд
                     time = item.Time,
                     agentid = item.AgentId
                 });
@@ -63,9 +56,6 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                // читаем при помощи Query и в шаблон подставляем тип данных
-                // объект которого Dapper сам и заполнит его поля
-                // в соответсвии с названиями колонок
                 return connection.Query<CpuMetricFromAgent>("SELECT Id, Time, Value FROM cpumetrics").ToList();
             }
         }
@@ -86,11 +76,20 @@ namespace MetricsManager.DAL
                 new { id = id });
             }
         }
-        public IList<CpuMetricFromAgent> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
+        public IList<CpuMetricFromAgent> GetMetricsByTimePeriodFromAgent(int agentId, DateTimeOffset fromTime, DateTimeOffset toTime)
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.Query<CpuMetricFromAgent>("SELECT * FROM cpumetrics WHERE Time > @fromTime AND Time < @toTime",
+                return connection.Query<CpuMetricFromAgent>("SELECT * FROM cpumetrics WHERE (Time > @fromTime AND Time < @toTime AND agentId==@agentId)",
+                    new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds(), agentId = agentId }).ToList();
+            }
+        }
+
+        public IList<CpuMetricFromAgent> GetMetricsByTimePeriodFromCluster(DateTimeOffset fromTime, DateTimeOffset toTime)
+        {
+            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
+            {
+                return connection.Query<CpuMetricFromAgent>("SELECT * FROM cpumetrics WHERE (Time > @fromTime AND Time < @toTime)",
                     new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds() }).ToList();
             }
         }

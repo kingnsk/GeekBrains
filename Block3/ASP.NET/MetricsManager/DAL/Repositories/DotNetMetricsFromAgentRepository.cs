@@ -11,25 +11,18 @@ namespace MetricsManager.DAL
 {
     public class DotNetMetricsFromAgentRepository : IDotNetMetricsFromAgentRepository
     {
-        // инжектируем соединение с базой данных в наш репозиторий через    
-            public DotNetMetricsFromAgentRepository()
-            {
-            // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
+        public DotNetMetricsFromAgentRepository()
+        {
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
-            }
+        }
         public void Create(DotNetMetricFromAgent item)
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                // запрос на вставку данных с плейсхолдерами для параметров
-                connection.Execute("INSERT INTO DotNetmetrics(value, time, agentid) VALUES(@value, @time, @agentid)",
-                // анонимный объект с параметрами запроса
+                connection.Execute("INSERT INTO dotnetmetrics(value, time, agentid) VALUES(@value, @time, @agentid)",
                 new
                 {
-                    // value подставится на место "@value" в строке запроса
-                    // значение запишется из поля Value объекта item
                     value = item.Value,
-                    // записываем в поле time количество секунд
                     time = item.Time,
                     agentid = item.AgentId
                 });
@@ -39,7 +32,7 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                connection.Execute("DELETE FROM DotNetmetrics WHERE id=@id",
+                connection.Execute("DELETE FROM dotnetmetrics WHERE id=@id",
                 new
                 {
                     id = id
@@ -50,7 +43,7 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                connection.Execute("UPDATE DotNetmetrics SET value = @value, time = @time WHERE id = @id",
+                connection.Execute("UPDATE dotnetmetrics SET value = @value, time = @time WHERE id = @id",
                 new
                 {
                     value = item.Value,
@@ -63,10 +56,7 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                // читаем при помощи Query и в шаблон подставляем тип данных
-                // объект которого Dapper сам и заполнит его поля
-                // в соответсвии с названиями колонок
-                return connection.Query<DotNetMetricFromAgent>("SELECT Id, Time, Value FROM DotNetmetrics").ToList();
+                return connection.Query<DotNetMetricFromAgent>("SELECT Id, Time, Value FROM dotnetmetrics").ToList();
             }
         }
 
@@ -74,7 +64,7 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM dotnetmetrics WHERE id = @id", new { id = id });
+                return connection.QuerySingle<Int64>("SELECT max(time) FROM dotnetmetrics WHERE id = @id", new { id = id });
             }
         }
 
@@ -82,15 +72,24 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<DotNetMetricFromAgent>("SELECT Id, Time, Value FROM DotNetmetrics WHERE id = @id",
+                return connection.QuerySingle<DotNetMetricFromAgent>("SELECT Id, Time, Value FROM dotnetmetrics WHERE id = @id",
                 new { id = id });
             }
         }
-        public IList<DotNetMetricFromAgent> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
+        public IList<DotNetMetricFromAgent> GetMetricsByTimePeriodFromAgent(int agentId, DateTimeOffset fromTime, DateTimeOffset toTime)
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.Query<DotNetMetricFromAgent>("SELECT * FROM DotNetmetrics WHERE Time > @fromTime AND Time < @toTime",
+                return connection.Query<DotNetMetricFromAgent>("SELECT * FROM dotnetmetrics WHERE (Time > @fromTime AND Time < @toTime AND agentId==@agentId)",
+                    new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds(), agentId = agentId }).ToList();
+            }
+        }
+
+        public IList<DotNetMetricFromAgent> GetMetricsByTimePeriodFromCluster(DateTimeOffset fromTime, DateTimeOffset toTime)
+        {
+            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
+            {
+                return connection.Query<DotNetMetricFromAgent>("SELECT * FROM dotnetmetrics WHERE (Time > @fromTime AND Time < @toTime)",
                     new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds() }).ToList();
             }
         }

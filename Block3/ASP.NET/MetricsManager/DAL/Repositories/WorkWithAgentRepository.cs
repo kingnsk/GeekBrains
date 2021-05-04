@@ -74,12 +74,31 @@ namespace MetricsManager.DAL
             }
         }
 
-        public IList<Agent> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
+        //public IList<Agent> GetMetricsByTimePeriod(int agentId, DateTimeOffset fromTime, DateTimeOffset toTime)
+        //{
+        //    using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
+        //    {
+        //        return connection.Query<Agent>("SELECT * FROM cpumetrics WHERE Time > @fromTime AND Time < @toTime AND agentId=@agentId",
+        //            new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds(), agentId = agentId }).ToList();
+        //    }
+        //}
+
+        public long GetMaxTime( int id)
         {
             throw new NotImplementedException();
         }
 
-        public long GetMaxTime( int id)
+        public IList<Agent> GetMetricsByTimePeriod(int agentId, DateTimeOffset fromTime, DateTimeOffset toTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<Agent> GetMetricsByTimePeriodFromAgent(int agentId, DateTimeOffset fromTime, DateTimeOffset toTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<Agent> GetMetricsByTimePeriodFromCluster(DateTimeOffset fromTime, DateTimeOffset toTime)
         {
             throw new NotImplementedException();
         }
