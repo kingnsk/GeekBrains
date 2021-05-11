@@ -27,18 +27,15 @@ namespace Asynchronous_programming
             var tasks = new List<Task<ResponseDto>>();
             for (int i = _startPost; i <= _endPost; i++)
             {
-                var task = getPost(i);
+                var task = GetPost(i);
                 tasks.Add(task);
             }
 
             // ждем завершения всех запущенных в работу задач
-            await Task.WhenAll(tasks);
-
-            //результат каждой задачи заносим в список
-            tasks.ForEach(t => listOfPosts.Add(t.Result));
+            var posts = await Task.WhenAll(tasks);
 
             //Записываем данные из списка в выходной файл
-            foreach(var currentPost in listOfPosts)
+            foreach(var currentPost in posts)
             {
                 var outputData = 
                     currentPost.userId.ToString() + "\n"+ 
@@ -50,7 +47,7 @@ namespace Asynchronous_programming
             }
         }
 
-        static async Task<ResponseDto> getPost(int postId)
+        static async Task<ResponseDto> GetPost(int postId)
         {
             var httpRequest = _urlRequest + postId.ToString();
             var httpResponse = await _client.GetAsync(httpRequest);
