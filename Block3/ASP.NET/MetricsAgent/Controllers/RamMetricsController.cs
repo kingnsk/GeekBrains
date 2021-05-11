@@ -30,8 +30,10 @@ namespace MetricsAgent.Controllers
         [HttpGet("available")]
         public IActionResult GetRamAvavailableFromAgent()
         {
+            var perfomance = new System.Diagnostics.PerformanceCounter("Memory", "Available MBytes");
+            var response = perfomance.NextValue();
             _logger.LogInformation(5, $"Параметры: ()");
-            return Ok();
+            return Ok(response);
         }
 
         [HttpGet("from/{fromTime}/to/{toTime}")]

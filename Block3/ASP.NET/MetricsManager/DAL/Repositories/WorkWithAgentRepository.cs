@@ -74,15 +74,6 @@ namespace MetricsManager.DAL
             }
         }
 
-        //public IList<Agent> GetMetricsByTimePeriod(int agentId, DateTimeOffset fromTime, DateTimeOffset toTime)
-        //{
-        //    using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
-        //    {
-        //        return connection.Query<Agent>("SELECT * FROM cpumetrics WHERE Time > @fromTime AND Time < @toTime AND agentId=@agentId",
-        //            new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds(), agentId = agentId }).ToList();
-        //    }
-        //}
-
         public long GetMaxTime( int id)
         {
             throw new NotImplementedException();

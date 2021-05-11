@@ -62,10 +62,15 @@ namespace MetricsManager.DAL
 
         public Int64 GetMaxTime(int id)
         {
-            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
+            try
             {
-                return connection.QuerySingle<Int64>("SELECT max(time) FROM cpumetrics WHERE id = @id", new { id = id}); 
+                using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
+                {
+                    return connection.QuerySingle<Int64>("SELECT max(time) FROM cpumetrics WHERE id = @id", new { id = id });
+                }
             }
+            catch (Exception)
+            { return 0; }
         }
 
         public CpuMetricFromAgent GetById(int id)
@@ -80,6 +85,9 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
+                var debugFromTime = fromTime.ToUnixTimeSeconds();
+                var debugToTime = toTime.ToUnixTimeSeconds();
+
                 return connection.Query<CpuMetricFromAgent>("SELECT * FROM cpumetrics WHERE (Time > @fromTime AND Time < @toTime AND agentId==@agentId)",
                     new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds(), agentId = agentId }).ToList();
             }
