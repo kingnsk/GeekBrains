@@ -12,7 +12,7 @@ namespace Timesheets.Data.Ef.Configurations
 
             builder.Property(x => x.Id)
                 .ValueGeneratedNever()
-                .HasColumnName("Id");
+                    .HasColumnName("Id");
 
             builder
                 .HasOne(sheet => sheet.Contract)
@@ -28,6 +28,11 @@ namespace Timesheets.Data.Ef.Configurations
                 .HasOne(sheet => sheet.Employee)
                 .WithMany(employee => employee.Sheets)
                 .HasForeignKey("EmployeeId");
+
+            builder
+                .HasOne(sheet => sheet.Invoice)
+                .WithMany(invoice => invoice.Sheets)
+                .HasForeignKey("InvoiceId");
         }
     }
 }

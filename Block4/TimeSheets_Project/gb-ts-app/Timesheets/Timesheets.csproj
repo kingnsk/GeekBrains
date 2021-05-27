@@ -19,7 +19,6 @@
   </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data\Ef\Cofigurations\" />
       <Folder Include="Migrations\" />
     </ItemGroup>
 

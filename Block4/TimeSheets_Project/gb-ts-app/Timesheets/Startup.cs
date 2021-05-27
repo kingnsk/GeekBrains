@@ -18,6 +18,8 @@ using Timesheets.Data.Implementation;
 using Timesheets.Data.Interfaces;
 using Timesheets.Domain.Implementation;
 using Timesheets.Domain.Interfaces;
+using Timesheets.Infrastructure;
+using Timesheets.Infrastructure.Extensions;
 
 namespace Timesheets
 {
@@ -33,24 +35,47 @@ namespace Timesheets
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<TimesheetDbContext>(options =>
-               // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            //UsePostgres
-            {
-                options.UseNpgsql(
-                    Configuration.GetConnectionString("Postgres"),
-                    b => b.MigrationsAssembly("Timesheets"));
-            });
+            //services.AddDbContext<TimesheetDbContext>(options =>
+            //{
+            //    options.UseNpgsql(
+            //        Configuration.GetConnectionString("Postgres"),
+            //        b => b.MigrationsAssembly("Timesheets"));
+            //});
 
-            services.AddScoped<ISheetRepo, SheetRepo>();
-            services.AddScoped<IContractManager, ContractManager>();
-            services.AddScoped<ISheetManager, SheetManager>();
-            services.AddScoped<IContractRepo, ContractRepo>();
+            services.ConfigureDbContext(Configuration);
+
+            //services.AddScoped<ISheetRepo, SheetRepo>();
+            //services.AddScoped<IContractManager, ContractManager>();
+            //services.AddScoped<ISheetManager, SheetManager>();
+            //services.AddScoped<IContractRepo, ContractRepo>();
+
+            services.ConfigureAuthentication(Configuration);
+            services.ConfigureRepositories();
+            services.ConfigureDomainManagers();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "Timesheets", Version = "v1"});
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme()
+                        {
+                            Reference = new OpenApiReference(){Type = ReferenceType.SecurityScheme, Id = "Bearer"}
+                        },
+                        Array.Empty<string>()
+                    }
+
+ });
+
             });
         }
 
@@ -68,6 +93,7 @@ namespace Timesheets
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

@@ -17,10 +17,10 @@ namespace Timesheets.Controllers
         }
         /// <summary> Создаем пользователя, возвращаем id </summary>
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] UserRequest user)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {
-            var id = await _userManager.Create(user);
-            return Ok(id);
+            var response = await _userManager.CreateUser(request);
+            return Ok(response);
         }
 
         /// <summary> Возвращаем User по id </summary>

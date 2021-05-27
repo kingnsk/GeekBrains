@@ -2,11 +2,13 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Timesheets.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Timesheets.Models;
 using Timesheets.Models.Dto;
 
 namespace Timesheets.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class SheetsController: ControllerBase
@@ -21,6 +23,7 @@ namespace Timesheets.Controllers
         }
 
         /// <summary> Возвращает запись из табеля </summary>
+        [Authorize(Roles = "client")]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get([FromQuery] Guid id)
         {
@@ -28,7 +31,8 @@ namespace Timesheets.Controllers
             
             return Ok(result);
         }
-        
+
+        [Authorize(Roles = "user")]
         [HttpGet]
         public async Task<IActionResult> GetItems()
         {
@@ -37,6 +41,7 @@ namespace Timesheets.Controllers
         }
 
         /// <summary> Создает запись в табеле </summary>
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SheetRequest sheet)
         {
@@ -52,6 +57,7 @@ namespace Timesheets.Controllers
         }
 
         /// <summary> Обновляет запись табеля </summary>
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] SheetRequest sheet)
         {

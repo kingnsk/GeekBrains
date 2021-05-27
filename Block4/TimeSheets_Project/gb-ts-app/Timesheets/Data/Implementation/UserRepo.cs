@@ -18,10 +18,18 @@ namespace Timesheets.Data.Implementation
             _context = context;
         }
 
-        public async Task Add(User item)
+        public async Task CreateUser(User user) //подумать как логичнее Add or Create
         {
-            await _context.Users.AddAsync(item);
+            await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<User> GetByLoginAndPasswordHash(string login, byte[] passwordHash)
+        {
+            return
+                await _context.Users
+                    .Where(x => x.Username == login && x.PasswordHash == passwordHash)
+                    .FirstOrDefaultAsync();
         }
 
         public async Task<User> GetItem(Guid id)

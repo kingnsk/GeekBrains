@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
+using Timesheets.Infrastructure.Extensions;
 using Timesheets.Data.Interfaces;
 using Timesheets.Domain.Interfaces;
 using Timesheets.Models;
@@ -18,16 +23,18 @@ namespace Timesheets.Domain.Implementation
             _userRepo = userRepo;
         }
 
-        public async Task<Guid> Create(UserRequest userRequest)
-        {
-            var user = new User
-            {
-                Id = Guid.NewGuid(),
-                Username = userRequest.Username,
-            };
-            await _userRepo.Add(user);
-            return user.Id;
-        }
+        //public async Task<Guid> CreateUser(UserRequest userRequest)
+        //{
+        //    var user = new User
+        //    {
+        //        Id = Guid.NewGuid(),
+        //        Username = userRequest.Username,
+        //        PasswordHash = GetPasswordHash(userRequest.Password),
+        //        Role = userRequest.Role
+        //    };
+        //    await _userRepo.CreateUser(user);
+        //    return user.Id;
+        //}
 
         public async Task<User> GetItem(Guid id)
         {
@@ -39,6 +46,7 @@ namespace Timesheets.Domain.Implementation
         {
             return
                 await _userRepo.GetItems();
+
         }
 
         public async Task Update(Guid id, UserRequest userRequest)
@@ -49,6 +57,37 @@ namespace Timesheets.Domain.Implementation
                 Username = userRequest.Username
             };
             await _userRepo.Update(user);
+        }
+
+        public async Task<User> GetUser(LoginRequest request)
+        {
+            var passwordHash = GetPasswordHash(request.Password);
+            var user = await _userRepo.GetByLoginAndPasswordHash(request.Login, passwordHash);
+
+            return user;
+        }
+
+        public async Task<Guid> CreateUser(CreateUserRequest request)
+        {
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = request.Username,
+                PasswordHash = GetPasswordHash(request.Password),
+                Role = request.Role
+            };
+
+            await _userRepo.CreateUser(user);
+
+            return user.Id;
+        }
+
+        private static byte[] GetPasswordHash(string password)
+        {
+            using (var sha1 = new SHA1CryptoServiceProvider())
+            {
+                return sha1.ComputeHash(Encoding.Unicode.GetBytes(password));
+            }
         }
     }
 }
