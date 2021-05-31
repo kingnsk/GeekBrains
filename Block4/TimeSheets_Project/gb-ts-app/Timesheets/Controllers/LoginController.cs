@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Timesheets.Domain.Interfaces;
 using Timesheets.Models.Dto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Timesheets.Controllers
 {
@@ -18,6 +19,7 @@ namespace Timesheets.Controllers
             _userManager = userManager;
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
