@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -35,12 +36,6 @@ namespace Timesheets
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<TimesheetDbContext>(options =>
-            //{
-            //    options.UseNpgsql(
-            //        Configuration.GetConnectionString("Postgres"),
-            //        b => b.MigrationsAssembly("Timesheets"));
-            //});
 
             services.ConfigureDbContext(Configuration);
 
@@ -52,31 +47,35 @@ namespace Timesheets
             services.ConfigureAuthentication(Configuration);
             services.ConfigureRepositories();
             services.ConfigureDomainManagers();
+            services.ConfigureBackendSwagger();
+            services.ConfigureValidation();
 
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Timesheets", Version = "v1"});
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    BearerFormat = "JWT"
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {
-                    {
-                        new OpenApiSecurityScheme()
-                        {
-                            Reference = new OpenApiReference(){Type = ReferenceType.SecurityScheme, Id = "Bearer"}
-                        },
-                        Array.Empty<string>()
-                    }
+            services.AddControllers()
+                .AddFluentValidation();
 
- });
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1", new OpenApiInfo {Title = "Timesheets", Version = "v1"});
+            //    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            //    {
+            //        In = ParameterLocation.Header,
+            //        Type = SecuritySchemeType.Http,
+            //        Scheme = "bearer",
+            //        BearerFormat = "JWT"
+            //    });
+            //    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            //    {
+            //        {
+            //            new OpenApiSecurityScheme()
+            //            {
+            //                Reference = new OpenApiReference(){Type = ReferenceType.SecurityScheme, Id = "Bearer"}
+            //            },
+            //            Array.Empty<string>()
+            //        }
 
-            });
+            //    });
+
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
