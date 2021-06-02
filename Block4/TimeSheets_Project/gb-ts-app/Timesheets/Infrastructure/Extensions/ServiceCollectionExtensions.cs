@@ -59,6 +59,8 @@ namespace Timesheets.Infrastructure.Extensions
             services.AddScoped<IContractManager, ContractManager>();
             services.AddScoped<IUserManager, UserManager>();
             services.AddScoped<IEmployeeManager, EmployeeManager>();
+            services.AddScoped<ILoginManager, LoginManager>();
+            services.AddScoped<IInvoiceManager, InvoiceManager>();
         }
 
         public static void ConfigureRepositories(this IServiceCollection services)
