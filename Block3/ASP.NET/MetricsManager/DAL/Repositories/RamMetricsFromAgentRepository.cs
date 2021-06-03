@@ -11,25 +11,18 @@ namespace MetricsManager.DAL
 {
     public class RamMetricsFromAgentRepository : IRamMetricsFromAgentRepository
     {
-        // инжектируем соединение с базой данных в наш репозиторий через    
-            public RamMetricsFromAgentRepository()
-            {
-            // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
+        public RamMetricsFromAgentRepository()
+        {
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
-            }
+        }
         public void Create(RamMetricFromAgent item)
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                // запрос на вставку данных с плейсхолдерами для параметров
-                connection.Execute("INSERT INTO Rammetrics(value, time, agentid) VALUES(@value, @time, @agentid)",
-                // анонимный объект с параметрами запроса
+                connection.Execute("INSERT INTO rammetrics(value, time, agentid) VALUES(@value, @time, @agentid)",
                 new
                 {
-                    // value подставится на место "@value" в строке запроса
-                    // значение запишется из поля Value объекта item
                     value = item.Value,
-                    // записываем в поле time количество секунд
                     time = item.Time,
                     agentid = item.AgentId
                 });
@@ -39,7 +32,7 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                connection.Execute("DELETE FROM Rammetrics WHERE id=@id",
+                connection.Execute("DELETE FROM rammetrics WHERE id=@id",
                 new
                 {
                     id = id
@@ -50,7 +43,7 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                connection.Execute("UPDATE Rammetrics SET value = @value, time = @time WHERE id = @id",
+                connection.Execute("UPDATE rammetrics SET value = @value, time = @time WHERE id = @id",
                 new
                 {
                     value = item.Value,
@@ -63,9 +56,6 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                // читаем при помощи Query и в шаблон подставляем тип данных
-                // объект которого Dapper сам и заполнит его поля
-                // в соответсвии с названиями колонок
                 return connection.Query<RamMetricFromAgent>("SELECT Id, Time, Value FROM rammetrics").ToList();
             }
         }
@@ -74,8 +64,7 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM rammetrics WHERE id = @id",
-                new { id = id });
+                return connection.QuerySingle<Int64>("SELECT max(time) FROM rammetrics WHERE id = @id", new { id = id });
             }
         }
 
@@ -87,11 +76,20 @@ namespace MetricsManager.DAL
                 new { id = id });
             }
         }
-        public IList<RamMetricFromAgent> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
+        public IList<RamMetricFromAgent> GetMetricsByTimePeriodFromAgent(int agentId, DateTimeOffset fromTime, DateTimeOffset toTime)
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.Query<RamMetricFromAgent>("SELECT * FROM Rammetrics WHERE Time > @fromTime AND Time < @toTime",
+                return connection.Query<RamMetricFromAgent>("SELECT * FROM rammetrics WHERE (Time > @fromTime AND Time < @toTime AND agentId==@agentId)",
+                    new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds(), agentId = agentId }).ToList();
+            }
+        }
+
+        public IList<RamMetricFromAgent> GetMetricsByTimePeriodFromCluster(DateTimeOffset fromTime, DateTimeOffset toTime)
+        {
+            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
+            {
+                return connection.Query<RamMetricFromAgent>("SELECT * FROM rammetrics WHERE (Time > @fromTime AND Time < @toTime)",
                     new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds() }).ToList();
             }
         }

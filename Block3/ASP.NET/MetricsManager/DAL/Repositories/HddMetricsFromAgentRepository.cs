@@ -11,25 +11,18 @@ namespace MetricsManager.DAL
 {
     public class HddMetricsFromAgentRepository : IHddMetricsFromAgentRepository
     {
-        // инжектируем соединение с базой данных в наш репозиторий через    
-            public HddMetricsFromAgentRepository()
-            {
-            // добавляем парсилку типа TimeSpan в качестве подсказки для SQLite
+        public HddMetricsFromAgentRepository()
+        {
             SqlMapper.AddTypeHandler(new TimeSpanHandler());
-            }
+        }
         public void Create(HddMetricFromAgent item)
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                // запрос на вставку данных с плейсхолдерами для параметров
                 connection.Execute("INSERT INTO hddmetrics(value, time, agentid) VALUES(@value, @time, @agentid)",
-                // анонимный объект с параметрами запроса
                 new
                 {
-                    // value подставится на место "@value" в строке запроса
-                    // значение запишется из поля Value объекта item
                     value = item.Value,
-                    // записываем в поле time количество секунд
                     time = item.Time,
                     agentid = item.AgentId
                 });
@@ -63,9 +56,6 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                // читаем при помощи Query и в шаблон подставляем тип данных
-                // объект которого Dapper сам и заполнит его поля
-                // в соответсвии с названиями колонок
                 return connection.Query<HddMetricFromAgent>("SELECT Id, Time, Value FROM hddmetrics").ToList();
             }
         }
@@ -74,7 +64,7 @@ namespace MetricsManager.DAL
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.QuerySingle<Int64>("SELECT MAX(Time) FROM hddmetrics WHERE id = @id", new { id = id });
+                return connection.QuerySingle<Int64>("SELECT max(time) FROM hddmetrics WHERE id = @id", new { id = id });
             }
         }
 
@@ -86,11 +76,20 @@ namespace MetricsManager.DAL
                 new { id = id });
             }
         }
-        public IList<HddMetricFromAgent> GetMetricsByTimePeriod(DateTimeOffset fromTime, DateTimeOffset toTime)
+        public IList<HddMetricFromAgent> GetMetricsByTimePeriodFromAgent(int agentId, DateTimeOffset fromTime, DateTimeOffset toTime)
         {
             using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
             {
-                return connection.Query<HddMetricFromAgent>("SELECT * FROM hddmetrics WHERE Time > @fromTime AND Time < @toTime",
+                return connection.Query<HddMetricFromAgent>("SELECT * FROM hddmetrics WHERE (Time > @fromTime AND Time < @toTime AND agentId==@agentId)",
+                    new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds(), agentId = agentId }).ToList();
+            }
+        }
+
+        public IList<HddMetricFromAgent> GetMetricsByTimePeriodFromCluster(DateTimeOffset fromTime, DateTimeOffset toTime)
+        {
+            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
+            {
+                return connection.Query<HddMetricFromAgent>("SELECT * FROM hddmetrics WHERE (Time > @fromTime AND Time < @toTime)",
                     new { fromTime = fromTime.ToUnixTimeSeconds(), toTime = toTime.ToUnixTimeSeconds() }).ToList();
             }
         }
