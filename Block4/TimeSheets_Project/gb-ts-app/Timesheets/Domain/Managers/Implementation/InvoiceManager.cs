@@ -33,7 +33,7 @@ namespace Timesheets.Domain.Implementation
             var sheetsToInclude = await _invoiceAggregateRepo
                 .GetSheets(request.ContractId, request.DateStart, request.DateEnd);
 
-            invoice.IcludeSheets(sheetsToInclude);
+            invoice.IncludeSheets(sheetsToInclude);
 
             await _invoiceRepo.Add(invoice);
 

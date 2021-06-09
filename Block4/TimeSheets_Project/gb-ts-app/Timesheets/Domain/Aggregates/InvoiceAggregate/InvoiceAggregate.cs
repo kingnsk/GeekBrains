@@ -24,7 +24,7 @@ namespace Timesheets.Domain.Aggregates.InvoiceAggregate
             };
         }
 
-        public void IcludeSheets(IEnumerable<Sheet> sheets)
+        public void IncludeSheets(IEnumerable<Sheet> sheets)
         {
             Sheets.AddRange(sheets);
             CalculateSum();
