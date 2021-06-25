@@ -2,12 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Timesheets.Domain.Interfaces;
 using Timesheets.Models.Dto;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Timesheets.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class LoginController : ControllerBase
+    public class LoginController : TimesheetBaseController
     {
         private readonly IUserManager _userManager;
         private readonly ILoginManager _loginManager;
@@ -18,6 +17,7 @@ namespace Timesheets.Controllers
             _userManager = userManager;
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {

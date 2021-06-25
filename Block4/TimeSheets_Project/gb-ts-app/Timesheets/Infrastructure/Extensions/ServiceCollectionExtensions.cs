@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,8 @@ using Timesheets.Data.Implementation;
 using Timesheets.Data.Interfaces;
 using Timesheets.Domain.Implementation;
 using Timesheets.Domain.Interfaces;
+using Timesheets.Infrastructure.Validation;
+using Timesheets.Models.Dto;
 using Timesheets.Models.Dto.Authentication;
 
 namespace Timesheets.Infrastructure.Extensions
@@ -56,6 +59,8 @@ namespace Timesheets.Infrastructure.Extensions
             services.AddScoped<IContractManager, ContractManager>();
             services.AddScoped<IUserManager, UserManager>();
             services.AddScoped<IEmployeeManager, EmployeeManager>();
+            services.AddScoped<ILoginManager, LoginManager>();
+            services.AddScoped<IInvoiceManager, InvoiceManager>();
         }
 
         public static void ConfigureRepositories(this IServiceCollection services)
@@ -64,6 +69,9 @@ namespace Timesheets.Infrastructure.Extensions
             services.AddScoped<IContractRepo, ContractRepo>();
             services.AddScoped<IUserRepo, UserRepo>();
             services.AddScoped<IEmployeeRepo, EmployeeRepo>();
+            //services.AddScoped<IClientRepo, ClientRepo>();
+            services.AddScoped<IInvoiceRepo, InvoiceRepo>();
+            //services.AddScoped<IServiceRepo, ServiceRepo>();
         }
 
         public static void ConfigureBackendSwagger(this IServiceCollection services)
@@ -75,24 +83,12 @@ namespace Timesheets.Infrastructure.Extensions
                     Version = "v1",
                     Title = "Timesheets web application",
                     Description = "",
-                    //TermsOfService = new Uri("https://example.com/terms"),
-                    //Contact = new OpenApiContact
-                    //{
-                    //    Name = "Shayne Boyer",
-                    //    Email = string.Empty,
-                    //    Url = new Uri("https://twitter.com/spboyer"),
-                    //},
-                    //License = new OpenApiLicense
-                    //{
-                    //    Name = "Use under LICX",
-                    //    Url = new Uri("https://example.com/license"),
-                    //}
                 });
 
                 // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
+                //var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                //var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                //c.IncludeXmlComments(xmlPath);
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -112,6 +108,11 @@ namespace Timesheets.Infrastructure.Extensions
                     }
                 });
             });
+        }
+
+        public static void ConfigureValidation(this IServiceCollection services)
+        {
+            services.AddTransient<IValidator<SheetRequest>, SheetRequestValidator>();
         }
 
     }
