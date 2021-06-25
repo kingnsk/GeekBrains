@@ -1,6 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timesheets", "Timesheets\Timesheets.csproj", "{B926B4A1-D2C9-4646-A8A4-D835CBA519EB}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Timesheets", "Timesheets\Timesheets.csproj", "{B926B4A1-D2C9-4646-A8A4-D835CBA519EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timesheets.Tests", "Timesheets.Tests\Timesheets.Tests.csproj", "{408BCD96-F37F-466E-A56C-36145AF0109D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B926B4A1-D2C9-4646-A8A4-D835CBA519EB} = {B926B4A1-D2C9-4646-A8A4-D835CBA519EB}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +20,15 @@ Global
 		{B926B4A1-D2C9-4646-A8A4-D835CBA519EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B926B4A1-D2C9-4646-A8A4-D835CBA519EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B926B4A1-D2C9-4646-A8A4-D835CBA519EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{408BCD96-F37F-466E-A56C-36145AF0109D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{408BCD96-F37F-466E-A56C-36145AF0109D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{408BCD96-F37F-466E-A56C-36145AF0109D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{408BCD96-F37F-466E-A56C-36145AF0109D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0FD683E9-FB36-4D30-84BE-C7EF91AFCD9D}
 	EndGlobalSection
 EndGlobal
