@@ -82,6 +82,7 @@
 using MetricsManager.Controllers;
 using MetricsManager.DAL;
 using MetricsManager.Models;
+using MetricsLibrary;
 using Moq;
 using System;
 using Xunit;
@@ -109,21 +110,6 @@ namespace MetricsManagerTests
             _controller = new CpuMetricsController(_mock_logger.Object, _mock.Object, _mock_mapper.Object);
         }
 
-        //[Fact]
-        //public void Create_ShouldCall_Create_From_Repository()
-        //{
-        //    // устанавливаем параметр заглушки
-        //    // в заглушке прописываем что в репозиторий прилетит CpuMetric объект
-        //    _mock.Setup(repository => repository.Create(It.IsAny<CpuMetric>())).Verifiable();
-
-        //    // выполняем действие на контроллере
-        //    var result = _controller.Create(new MetricsAgent.Requests.CpuMetricCreateRequest { Time = 1, Value = 50 });
-
-        //    // проверяем заглушку на то, что пока работал контроллер
-        //    // действительно вызвался метод Create репозитория с нужным типом объекта в параметре
-        //    _mock.Verify(repository => repository.Create(It.IsAny<CpuMetric>()), Times.AtMostOnce());
-        //}
-
         [Fact]
         public void Create_ShouldCall_GetMetricsByTimePeriod_From_Agent()
         {
@@ -140,14 +126,36 @@ namespace MetricsManagerTests
         }
 
         //[Fact]
-        //public void Create_ShouldCall_GetAll_From_Repository()
+        //public void Create_ShouldCall_GetMetricsByPercentile_From_Agent()
         //{
-        //    _mock.Setup(repository => repository.GetAll()).Returns(new List<CpuMetricFromAgent> { new CpuMetricFromAgent() { Time = 1000000, Value = 10, Id = 1 } });
+        //    DateTimeOffset fromTime = DateTimeOffset.Now.AddSeconds(secondsBackward);
+        //    DateTimeOffset toTime = DateTimeOffset.Now.AddSeconds(secondsForward);
+        //    int agentId = 1;
+        //    Percentile percentile = Percentile.P75;
 
-        //    var result = _controller.GetAll();
+        //    _mock.Setup(repository => repository.GetMetricsByTimePeriodFromAgent(It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+        //        .Returns(new List<CpuMetricFromAgent> { new CpuMetricFromAgent() { AgentId = 1, Time = 220000, Value = 20, Id = 1 }, new CpuMetricFromAgent() { AgentId = 1, Time = 2500000, Value = 10, Id = 2 } });
 
-        //    _mock.Verify(repository => repository.GetAll(), Times.AtMostOnce());
+        //    var result = _controller.GetMetricsByPercentileFromAgent(agentId, fromTime, toTime,percentile); 
+
+        //    _mock.Verify(repository => repository.GetMetricsByTimePeriodFromAgent(It.IsAny<int>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()), Times.AtMostOnce());
         //}
+
+
+        [Fact]
+        public void Create_ShouldCall_GetMetricsByTimePeriod_From_Cluster()
+        {
+            DateTimeOffset fromTime = DateTimeOffset.Now.AddSeconds(secondsBackward);
+            DateTimeOffset toTime = DateTimeOffset.Now.AddSeconds(secondsForward);
+
+            _mock.Setup(repository => repository.GetMetricsByTimePeriodFromCluster(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+                .Returns(new List<CpuMetricFromAgent> { new CpuMetricFromAgent() { Time = 220000, Value = 20, Id = 1 }, new CpuMetricFromAgent() { AgentId = 1, Time = 2500000, Value = 10, Id = 2 } });
+
+            var result = _controller.GetMetricsFromAllCluster(fromTime, toTime);
+
+            _mock.Verify(repository => repository.GetMetricsByTimePeriodFromCluster(It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()), Times.AtMostOnce());
+        }
+
     }
 }
 

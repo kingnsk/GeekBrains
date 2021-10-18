@@ -62,10 +62,16 @@ namespace MetricsManager.DAL
 
         public Int64 GetMaxTime(int id)
         {
-            using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
+            try
             {
-                return connection.QuerySingle<Int64>("SELECT max(time) FROM hddmetrics WHERE id = @id", new { id = id });
+                using (var connection = new SQLiteConnection(SQLConnectionSettings.ConnectionString))
+                {
+                    return connection.QuerySingle<Int64>("SELECT max(time) FROM hddmetrics WHERE id = @id", new { id = id });
+                }
             }
+            catch (Exception)
+            { return 0; }
+
         }
 
         public HddMetricFromAgent GetById(int id)
