@@ -10,12 +10,11 @@ namespace block5_1_WPF
 {
     class ListSafe<T> : List<T>
     {
-        private static object lockObjectOne = new object();
-        private static object lockObjectTwo = new object();
+        private object lockObject = new object();
 
         public void AddSafe(T item)
         {
-            lock (lockObjectOne)
+            lock (lockObject)
             {
                 base.Add(item);
             }
@@ -23,7 +22,7 @@ namespace block5_1_WPF
 
         public void RemoveSafe(T item)
         {
-            lock (lockObjectTwo)
+            lock (lockObject)
             {
                 base.Remove(item);
             }
