@@ -11,12 +11,7 @@ namespace ExamplePattern_Visitor_1
 
         public void Accept(IMonitorVisitor visitor)
         {
-            if (visitor is null)
-            {
-                return;
-            }
-
-            visitor.VisitComputer(this);
+            visitor?.VisitComputer(this);
         }
     }
 }

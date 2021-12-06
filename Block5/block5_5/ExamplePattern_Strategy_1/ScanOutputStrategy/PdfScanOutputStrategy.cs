@@ -21,6 +21,7 @@ namespace ExamplePattern_Strategy_1
             }
 
             dataOutput.Close();
+            dataOutput.Dispose();
         }
     }
 }

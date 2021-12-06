@@ -16,9 +16,9 @@ namespace ExamplePattern_ChainOfResponsibility_1
 
         public void ProcessData(IMonitorData data)
         {
-            if(ReviewData(data) && _next != null)
+            if(ReviewData(data))
             {
-                _next.ProcessData(data);
+                _next?.ProcessData(data);
             }
         }
 
