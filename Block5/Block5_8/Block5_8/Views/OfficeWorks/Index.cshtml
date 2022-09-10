@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Block5_8.Models.OfficeWork>
+
+@{
+    ViewData["Title"] = "Время работы";
+}
+
+<h1>Время работы сотрудников компании:</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Подразделение")
+            </th>
+            <th>
+                @Html.DisplayName("Должность")
+            </th>
+            <th>
+                @Html.DisplayName("Ф И О")
+            </th>
+            <th>
+                @Html.DisplayName("Начало работы")
+            </th>
+            <th>
+                @Html.DisplayName("Окончание работы")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Departament)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Position)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BeginningOfWork)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndOfWork)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
